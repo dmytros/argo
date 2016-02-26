@@ -1,0 +1,48 @@
+<style>
+  #components { float: left; width: 100%; height: 100%; min-height: 12em; }
+  .components.custom-state-active { background: #eee; }
+  .components li { float: left; width: 165px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .components li h5 { margin: 0 0 0.4em; cursor: move; }
+  .components li a.in { float: left; }
+  .components li a.out { float: right; }
+</style>
+
+<script>
+  $(function() {
+    var $components = $("#components");
+ 
+    $("li", $components).draggable({
+      cancel: "a.ui-icon",
+      revert: "invalid",
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });
+    
+    $components.droppable({
+      accept: "#component li",
+      activeClass: "custom-state-active",
+      drop: function(event, ui) {
+        //recycleImage( ui.draggable );
+        alert('hahaha2');
+      }
+    });
+
+  });
+</script>
+
+<div class="ui-widget ui-helper-clearfix">
+  <ul id="components" class="components ui-helper-reset ui-helper-clearfix">
+    <% for component in @components %>
+      <li class="ui-widget-content ui-corner-tr" component-id=<%= component.id %>">
+        <h5 class="ui-widget-header"><%= truncate component.name, legth: 21 %></h5>
+        <% for input_cast in component.input_casts %>
+          <a href="#" title="<%= input_cast.cast.name %>" class="ui-icon <%= img_class(input_cast.cast.sys) %> in"><%= input_cast.cast.name %></a>
+        <% end %>
+        <% for output_cast in component.output_casts %>
+          <a href="#" title="<%= output_cast.cast.name %>" class="ui-icon <%= img_class(output_cast.cast.sys) %> out"><%= output_cast.cast.name %></a>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

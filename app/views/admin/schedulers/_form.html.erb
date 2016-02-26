@@ -1,0 +1,67 @@
+<script>
+  $(function() {
+    $('#scheduler_start_at, #scheduler_end_at').datetimepicker();
+    
+    $('#scheduler_report_id').change(function() {
+      $.ajax({
+        url: '/admin/reports/' + $(this).val() + '/details',
+        method: 'get'
+      }).success(function(data) {
+        $('#report_observations_type').text('[' + data.observations_type_name + ']');
+        
+        if (data.source_destination == '<%= Source::DESTINATIONS[Source::DATABASE] %>') {
+          $('#report_sql_type').text('SQL');
+          $('#report_sql').text(data.sql);
+        } else if (data.source_destination == '<%= Source::DESTINATIONS[Source::FILE] %>') {
+          $('#report_sql_type').text('Regular Expression');
+          $('#report_sql').text(data.regular_expression);
+        }
+      });
+    });
+  });
+</script>
+
+<% if scheduler.errors.any? %>
+  <ul>
+    <% scheduler.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= form_for([:admin, scheduler]) do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :report_id %></td>
+      <td><%= f.select :report_id, options_for_select(@reports.collect{|report| [report.name, report.id]}, @scheduler.report_id) %></td>
+      <td>Observation type is <span id="report_observations_type">[<%= @reports.first.observations_type_name rescue "" %>]</span></td>
+      <% unless @reports.empty? %>
+        <% if @reports.first.source.use_database? %>
+          <td> and <span id="report_sql_type">SQL</span> is <span id="report_sql"><%= @reports.first.sql rescue "" %></span></td>
+        <% elsif @reports.first.source.use_file? %>
+          <td> and <span id="report_sql_type">Regular Expression</span> is <span id="report_sql"><%= @reports.first.regular_expression rescue "" %></span></td>
+        <% end %>
+      <% end %>
+    </tr>
+    <tr>
+      <td><%= f.label :start_at %></td>
+      <td><%= f.text_field :start_at %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :end_at %></td>
+      <td><%= f.text_field :end_at %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :repeat_every %></td>
+      <td><%= f.select :repeat_every, options_for_select((1..50), @scheduler.repeat_every) %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :repeat_type %></td>
+      <td><%= f.select :repeat_type, options_for_select(Scheduler::RepeatType::ALL, @scheduler.repeat_type || Scheduler::RepeatType::DAILY) %></td>
+    </tr>
+  </table>
+
+  <br/>
+  <%= f.submit  class: "button button-rounded" %>
+  <%= link_to 'Cancel', admin_schedulers_url, class: "button button-rounded" %>
+<% end %>

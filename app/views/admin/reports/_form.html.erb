@@ -1,0 +1,183 @@
+<script>
+  var field_rows = 0;
+  
+  $(function() {
+    $("#wizard").dialog({
+      modal: true,
+      autoOpen: false,
+      width: 925,
+      height: 800,
+      buttons: {
+        Ok: function() {
+          $(this).dialog("close");
+        }
+      }
+    });
+    
+    $('#report_source_id').change(function() {
+      var source_id = $(this).val();
+      
+      if (source_id === '') {
+        $('#tables').html('');
+        $('#parameters').html('');
+        $('#columns').html('');
+        $('#preview_sql').val('');
+      }
+      
+      $('#database_parameters').hide('slow');
+      $('#file_parameters').hide('slow');
+      $('#wizard_container').hide('slow');
+      
+      var database_source_ids = $.parseJSON($('#database_sources').val());
+      var file_source_ids = $.parseJSON($('#file_sources').val());
+
+      if (file_source_ids.indexOf(parseInt(source_id)) >= 0) {
+        $('#file_parameters').show('slow');
+      } else if (database_source_ids.indexOf(parseInt(source_id)) >= 0) {
+        $('#database_parameters').show('slow');
+        $('#wizard_container').show('slow');
+      }
+    });
+    
+    $('#report_regular_expression').keyup(function () {
+      $.ajax({
+        url: '/admin/reports/replace_macros',
+        method: 'post',
+        data: {
+          report: {
+            regular_expression: $('#report_regular_expression').val()
+          }
+        }
+      }).success(function(data) {
+        $('#converted_expression').html(data);
+      });
+    });
+    
+    $('#wizard-call').click(function(event) {
+      event.preventDefault();
+      
+      var source_id = $('#report_source_id option:selected').val();
+      
+      if (source_id !== '') {
+        $('#preview_sql').val('');
+
+        $.ajax({
+          url: '/admin/sources/' + source_id + '/tables',
+          method: 'get'
+        }).success(function(data) {
+          $('#tables').html(data);
+          $('#parameters').html("<%= escape_javascript(render(:partial => 'admin/sources/additional_parameters')) %>");
+          $('#columns').html("<%= escape_javascript(render(:partial => 'admin/sources/tables_columns')) %>");
+
+          $("#wizard").dialog("open");
+        });
+      } else {
+        alert('Please select soure before');
+      }
+    });
+    
+    $('#report_preview').click(function(event) {
+      event.preventDefault();
+      
+      resetDetails();
+      
+      $.ajax({
+        url: '/admin/reports/preview',
+        method: 'post',
+        data: {
+          report: {
+            sql: $('#report_sql').val(),
+            regular_expression: $('#report_regular_expression').val(),
+            name: $('#report_name').val(),
+            source_id: $('#report_source_id').val()
+          }
+        }
+      }).success(function(data) {
+        $('#executed_report_name').text(data['name']);
+        $('#execute_status').text(data['status']);
+        $('#elapsed_time').text(data['elapsed_time']);
+        $('#execute_message').text(data['message']);
+        $('#execute_rows').text(data['rows']);
+      }).done(function() {
+        $('#progress_spinner').hide();
+      });
+
+      $("#executed-data").dialog({
+        modal: true,
+        width: 800,
+        height: 500,
+        buttons: {
+          Ok: function() {
+            $(this).dialog("close");
+          }
+        }
+      });
+
+    });
+  });
+</script>
+
+<% if report.errors.any? %>
+  <ul>
+    <% report.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<div id="wizard_container" style="display:none">
+  <br/>
+  <a href="#" id="wizard-call">Use Wizard</a>
+  <br/><br/>
+</div>
+
+<%= hidden_field_tag 'database_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[0]}.compact.to_json %>
+<%= hidden_field_tag 'file_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[1]}.compact.to_json %>
+
+<%= form_for([:admin, report]) do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :name %></td>
+      <td><%= f.text_field :name %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :source_id %></td>
+      <td><%= f.select :source_id, options_for_select(@sources.collect{|source| [source.name, source.id]}, @report.source_id), include_blank: true %></td>
+    </tr>
+    <tbody id="database_parameters" style="<%= ((@report.source.destination == Source::DESTINATIONS[0] rescue false) ? "" : "display:none") %>">
+      <tr>
+        <td><%= f.label :sql %></td>
+        <td><%= f.text_area :sql, size: "70x10" %></td>
+      </tr>
+    </tbody>
+    <tbody id="file_parameters" style="<%= ((@report.source.destination == Source::DESTINATIONS[1] rescue false) ? "" : "display:none") %>">
+      <tr>
+        <td><%= f.label :regular_expression %></td>
+        <td><%= f.text_area :regular_expression, size: "70x10" %></td>
+        <td><span id="converted_expression"><%= Report.convert_macros(@report.regular_expression || '') %></span></td>
+      </tr>    
+    </tbody>
+    <tr>
+      <td><%= f.label :observations_type %></td>
+      <td><%= f.select :observations_type, options_for_select(Report::ObservationsType::ALL, @report.observations_type) %></td>
+    </tr>
+  </table>
+
+  <br/>
+  <a href="#" id="report_preview" class="button button-rounded">Preview</a>
+  <%= f.submit  class: "button button-rounded" %>
+  <%= link_to 'Cancel', admin_reports_url, class: "button button-rounded" %>
+<% end %>
+
+<div id="wizard" title="SQL Wizard">
+  <br/>
+  <div id="tables"></div>
+  <br/>
+  <div id="parameters"></div>
+  <br/>
+  <div id="columns"></div>
+  <br/>
+  <textarea id="preview_sql" cols="100"></textarea>
+</div>
+
+<%= render 'layouts/executed_data' %>

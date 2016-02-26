@@ -1,0 +1,11 @@
+<script>
+  $(function() {
+    $("#<%= table_id %>").DataTable({
+      data: <%= raw(data) %>,
+      columns: <%= raw(columns) %>
+    });
+  });
+</script>
+
+<table id="<%= table_id %>" class="table-widget" class="display" cellspacing="0" width="100%"></table>
+

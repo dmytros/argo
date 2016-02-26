@@ -1,0 +1,19 @@
+# == Schema Information
+#
+# Table name: casts
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  sys        :string
+#  img_class  :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+require 'test_helper'
+
+class CastTest < ActiveSupport::TestCase
+  # test "the truth" do
+  #   assert true
+  # end
+end

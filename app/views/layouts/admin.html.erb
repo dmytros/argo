@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Demetra</title>
+  <%= stylesheet_link_tag '//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css' %>
+  <%= stylesheet_link_tag '//cdn.datatables.net/1.10.7/css/jquery.dataTables.css' %>
+  
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  
+  <%= javascript_include_tag '//code.jquery.com/ui/1.11.4/jquery-ui.js' %>
+  <%= javascript_include_tag '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js' %>
+  
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <div id="head"><%= render 'layouts/header' %></div>
+  <div id="main">
+    <div class="notice_messages">
+      <%= flash[:notice] if flash[:notice] %>
+    </div>
+    
+    <br/>
+    <%= yield %>
+  </div>
+  
+  <script>
+    $('.notice_messages').delay(10000).hide('slow');
+  </script>
+</body>
+</html>

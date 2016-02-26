@@ -1,0 +1,92 @@
+<style>
+  #widgets { float: left; width: 100%; height: 100%; min-height: 12em; }
+  .widgets.custom-state-active { background: #eee; }
+  .widgets li { float: left; width: 165px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .widgets li h5 { margin: 0 0 0.4em; cursor: move; }
+  .widgets li a { float: right; }
+  .widgets li a.in { float: left; }
+  .widgets li a.out { float: right; }
+  
+  #component { float: right; width: 100%; height: 100%; min-height: 18em; padding: 0%; }
+  #component h4 { line-height: 16px; margin: 0 0 0.4em; }
+  #component h4 .ui-icon { float: left; }
+  
+  .reports_bg { background: #E3FFF2; }
+  .components_bg { background: #FEFFE3; }
+</style>
+
+<script>
+  $(function() {
+    var $component = $("#component");
+
+    $component.droppable({
+      accept: "#reports > li, #components > li",
+      activeClass: "ui-state-highlight",
+      drop: function(event, ui) {
+        appendWidget(ui.draggable, ui.draggable.parent().attr("id"));
+      }
+    });
+    
+    function appendWidget($item, $type) {
+      var li_count = $("ul li", $component).length;
+      
+      // set widget type and id
+      $item.attr('widget-type', $type);
+      $item.attr('widget-id', li_count);
+      
+      if ($type === 'reports') {
+        $item.fadeOut(function() {
+          var $list = $("ul", $component).length ? 
+            $("ul", $component) :
+            $("<ul class='widgets ui-helper-reset'/>").appendTo($component);
+
+          var cloned = $item.clone(false);
+          cloned.addClass('movable');
+          cloned.addClass('reports_bg');
+
+          cloned.find("a.ui-icon-trash,a.ui-icon-gear,a.ui-icon-play,a.ui-icon-document").remove();
+          cloned.appendTo($list).fadeIn(function() {
+            cloned.animate({width: "165px"}).animate({height: "50px"});
+            $('.movable').draggable({snap: true, grid: [10, 10]});
+          });
+        });
+      } else if ($type === 'components') {
+        var $list = $("ul", $component).length ?
+          $("ul", $component) :
+          $("<ul class='widgets ui-helper-reset'/>").appendTo($component);
+
+        var cloned = $item.clone(false);
+        cloned.addClass('movable');
+        cloned.addClass('components_bg');
+
+        // FOR DUBUGGING
+        cloned.attr('id', 'widget-id-' + li_count);
+
+
+        cloned.appendTo($list).fadeIn(function() {
+          cloned.animate({width: "165px"}).animate({height: "50px"});
+          $('.movable').draggable({snap: true, grid: [10, 10], 
+            start: function() {
+              
+            },
+            stop: function() {
+
+              if ($('#widget-id-0').length > 0 && $('#widget-id-1').length > 0) {
+                var w1 = $('#widget-id-0');
+                var w2 = $('#widget-id-1');
+                
+                w1.line(w1.offset().left, w1.offset().top, w2.offset().left, w2.offset().top, {color:"red", zindex:1});
+              }
+
+//console.log('x:' + $(this).offset().left + ' y:' + $(this).offset().top);
+            }
+          });
+        });
+      }
+    }
+    
+    //$('#example').line(0, 0, 100, 100, {color:"black", zindex:1});
+  });
+</script>
+
+<div id="component"></div>

@@ -1,0 +1,44 @@
+<script>
+  $(function() {
+    $('#sources-list').dataTable({
+      "ajax": "/admin/sources/list",
+      "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [8] }
+      ]
+    });
+  });
+</script>
+
+<%= link_to 'New', new_admin_source_url, class: "button button-rounded" %>
+<br/><br/>
+
+<h1>Sources list</h1>
+<br/>
+<table id="sources-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>User</th>
+      <th>Host</th>
+      <th>Port</th>
+      <th>Database</th>
+      <th>Source</th>
+      <th>Destination</th>
+      <th>Path</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>User</th>
+      <th>Host</th>
+      <th>Port</th>
+      <th>Database</th>
+      <th>Source</th>
+      <th>Destination</th>
+      <th>Path</th>
+      <th>Actions</th>
+    </tr>
+  </tfoot>
+</table>

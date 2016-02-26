@@ -1,0 +1,30 @@
+<div id="widget-settings" title="Widget Settings" style="display:none">
+  <table>
+    <tr>
+      <td>Reports:</td>
+      <td><%= select_tag 'report_id' %></td>
+    </tr>
+    <tr>
+      <td>Refresh Time:</td>
+      <td><%= select_tag 'refresh_time' %></td>
+    </tr>
+    <tr>
+      <td>Limits:</td>
+      <td><%= select_tag 'limits' %></td>
+    </tr>
+  </table>
+  
+  <table id="columns-options" style="display:none">
+    <tr>
+      <td>X axis:</td>
+      <td><%= select_tag 'x_axis' %></td>
+    </tr>
+    <tr>
+      <td>Y axis:</td>
+      <td><%= select_tag 'y_axis' %></td>
+    </tr>
+  </table>
+  
+  <a href="#" onclick="$('#last-values').toggle('slow')">debug info</a>
+  <div id="last-values" style="display:none"></div>
+</div>

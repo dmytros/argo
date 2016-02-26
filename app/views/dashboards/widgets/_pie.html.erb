@@ -1,0 +1,24 @@
+<% items = data.map {|item| "['#{item[0].to_s}', #{item[1].to_i}]"} %>
+
+<script>
+  function drawPie() {
+    var data = google.visualization.arrayToDataTable([
+          ['<%= raw(columns.values.join("','")) %>'],
+          <%= raw(items.join(',')) %>
+        ]);
+
+    var options = {
+      title: ''
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('<%= column_id %>'));
+
+    chart.draw(data, options);
+  }
+
+  $(function() {
+    drawPie();
+  });
+</script>
+
+<div id="<%= column_id %>" style="width:98%; height:98%;"></div>

@@ -1,0 +1,102 @@
+<style>
+  #toolbar {
+    padding: 4px;
+    display: inline-block;
+  }
+  /* support: IE7 */
+  *+html #toolbar {
+    display: inline;
+  }
+</style>
+
+<script>
+  $(function() {
+    $("#execute").button({
+      text: false,
+      icons: {
+        primary: "ui-icon-play"
+      }
+    })
+    .click(function() {
+      var options;
+      if ($( this ).text() === "Execute") {
+        options = {
+          label: "pause",
+          icons: {
+            primary: "ui-icon-pause"
+          }
+        };
+        
+        $.ajax({
+          url: '/containers/execute',
+          method: 'post',
+          data: buildTree()
+        }).success(function(data) {
+          console.log(data);
+        });
+
+      } else {
+        options = {
+          label: "Execute",
+          icons: {
+            primary: "ui-icon-play"
+          }
+        };
+      }
+      $(this).button("option", options);
+    });
+    $("#stop").button({
+      text: false,
+      icons: {
+        primary: "ui-icon-stop"
+      }
+    })
+    .click(function() {
+      $("#execute").button("option", {
+        label: "Execute",
+        icons: {
+          primary: "ui-icon-play"
+        }
+      });
+    });
+
+    $("#intermediate").button();
+    $("#run_options").buttonset();
+    
+    function buildTree() {
+      var tree = [];
+
+      $('#component').each(function() {
+        $(this).find('li').each(function() {
+          var el = $(this);
+          var branch = {};
+          
+          branch['type'] = el.attr('widget-type');
+
+          if (el.attr('widget-type') === 'reports') {
+            branch['id'] = el.attr('report-id');
+          } else if (el.attr('widget-type') === 'components') {
+            branch['id'] = el.attr('component-id');
+          }
+          
+          tree.push(branch);
+        });
+      });
+      
+      return {tree: tree};
+    }
+  });
+</script>
+
+<div id="toolbar" class="ui-widget-header ui-corner-all">
+  <button id="execute">Execute</button>
+  <button id="stop">Stop</button>
+ 
+  <input type="checkbox" id="intermediate"><label for="intermediate">Intermediate Results</label>
+ 
+  <span id="run_options">
+    <input type="radio" id="once_execute" name="run_options" checked="checked"><label for="once_execute">Execute Reports Once</label>
+    <input type="radio" id="everytime_execute" name="run_options"><label for="everytime_execute">Re-Execute Reports</label>
+    <input type="radio" id="background_execute" name="run_options"><label for="background_execute">Background Execute</label>
+  </span>
+</div>

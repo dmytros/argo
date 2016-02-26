@@ -1,0 +1,38 @@
+<script>
+  $(function() {
+    $('#schedulers-list').dataTable({
+      "ajax": "/admin/schedulers/list",
+      "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [5] }
+      ]
+    });
+  });
+</script>
+
+<%= link_to 'New', new_admin_scheduler_url, class: "button button-rounded" %>
+<br/><br/>
+
+<h1>Schedulers list</h1>
+<br/>
+<table id="schedulers-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Report</th>
+      <th>Start At</th>
+      <th>End At</th>
+      <th>Periodicity</th>
+      <th>Last Run</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Report</th>
+      <th>Start At</th>
+      <th>End At</th>
+      <th>Periodicity</th>
+      <th>Last Run</th>
+      <th>Actions</th>
+    </tr>
+  </tfoot>
+</table>

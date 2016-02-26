@@ -1,0 +1,31 @@
+<style>
+  #widgets { float: left; width: 100%; height: 100%; min-height: 12em; }
+  .widgets.custom-state-active { background: #eee; }
+  .widgets li { float: left; width: 165px; height: 80px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .widgets li h5 { margin: 0 0 0.4em; cursor: move; }
+</style>
+
+<script>
+  $(function() {
+    var $widgets = $("#widgets");
+ 
+    $("li", $widgets).draggable({
+      cancel: "a.ui-icon",
+      revert: "invalid",
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });    
+  });
+</script>
+
+<div class="ui-widget ui-helper-clearfix">
+  <ul id="widgets" class="widgets ui-helper-reset ui-helper-clearfix">
+    <% for widget in @widgets %>
+      <li class="ui-widget-content ui-corner-tr" widget-id="<%= widget.id %>" widget-type="<%= widget.sys %>">
+        <h5 class="ui-widget-header"><%= truncate widget.name, legth: 21 %></h5>
+        <%= image_tag([widget.sys, 'png'].join('.'), class: 'preview-image') %>
+      </li>
+    <% end %>
+  </ul>
+</div>

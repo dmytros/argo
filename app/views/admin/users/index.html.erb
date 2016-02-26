@@ -1,0 +1,32 @@
+<script>
+  $(function() {
+    $('#users-list').dataTable({
+      "ajax": "/admin/users/list",
+      "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [2] }
+      ]
+    });
+  });
+</script>
+
+<%= link_to 'New', new_admin_user_url, class: "button button-rounded" %>
+<br/><br/>
+
+<h1>Users list</h1>
+<br/>
+<table id="users-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </tfoot>
+</table>

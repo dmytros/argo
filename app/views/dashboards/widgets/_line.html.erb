@@ -1,0 +1,31 @@
+<% items = data.map {|item| "[new Date(#{item[0].strftime('%Y, %m, %d')}), #{item[1].to_i}]"} %>
+
+<script>
+  function drawLine() {
+    var data = new google.visualization.DataTable();
+    
+    data.addColumn('date', '<%= columns['x_axis'] %>');
+    data.addColumn('number', '<%= columns['y_axis'] %>');
+
+    data.addRows([<%= items.join(',') %>]);
+
+    var options = {
+      hAxis: {
+        title: '<%= columns['x_axis'] %>'
+      },
+      vAxis: {
+        title: '<%= columns['y_axis'] %>'
+      }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('<%= line_id %>'));
+
+    chart.draw(data, options);
+  }
+
+  $(function() {
+    drawLine();
+  });
+</script>
+
+<div id="<%= line_id %>" style="width:98%; height:98%;"></div>

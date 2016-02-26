@@ -1,0 +1,32 @@
+<script>
+  $(function() {
+    $('#alerts-list').dataTable({
+      "ajax": "/alerts/list",
+      "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [2] }
+      ]
+    });
+  });
+</script>
+
+<br/><br/>
+<h1>Alerts list</h1>
+<br/>
+<table id="alerts-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </tfoot>
+</table>

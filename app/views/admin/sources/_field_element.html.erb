@@ -1,0 +1,110 @@
+<tr class="field" row-id="0" name="">
+  <input name="field_type" type="hidden" value="" />
+  <td><a href="#" class="field_remove">X</a></td>
+  <td><input name="field_table" type="text" value="" size="7" readonly="readonly" /></td>
+  <td><input name="field_column" type="text" value="" size="7" readonly="readonly" /></td>
+  <td><input class="changeable" name="field_select" type="checkbox" checked="checked" /></td>
+  <td><input class="changeable" name="field_as" type="text" value="" size="7" /></td>
+  <td>
+    <select class="changeable" name="field_condition">
+      <option value=""></option>
+      <optgroup label="string">
+        <option value="str_like">like</option>
+        <option value="str_not_like">not like</option>
+        <option value="str_begins">begins</option>
+        <option value="str_not_begins">not begins</option>
+        <option value="str_ends">ends</option>
+        <option value="str_not_ends">not ends</option>
+        <option value="str_equals">equals</option>
+        <option value="str_not_equals">not equal</option>
+        <option value="str_in">in</option>
+        <option value="str_not_in">not in</option>
+        <option value="str_null">null</option>
+        <option value="str_not_null">not null</option>
+      </optgroup>
+      <optgroup label="numeric">
+        <option value="num_equals">equals</option>
+        <option value="num_not_equals">not equals</option>
+        <option value="num_more">more</option>
+        <option value="num_less">less</option>
+        <option value="num_more_and_equals">more and equals</option>
+        <option value="num_less_and_equals">less and equals</option>
+        <option value="num_in">in</option>
+        <option value="num_not_in">not in</option>
+      </optgroup>
+      <optgroup label="date">
+        <option value="date_equals">equals</option>
+        <option value="date_not_equals">not equals</option>
+        <option value="date_more">more</option>
+        <option value="date_less">less</option>
+        <option value="date_more_and_equals">more and equals</option>
+        <option value="date_less_and_equals">less and equals</option>
+        <option value="date_between">between</option>
+        <option value="date_in">in</option>
+        <option value="date_not_in">not in</option>
+      </optgroup>
+      <optgroup label="boolean">
+        <option value="bool_equals">equals</option>
+        <option value="bool_not_equals">not equals</option>
+      </optgroup>
+    </select>
+    <input class="changeable" name="field_condition_values" type="text" size="7" value="" />
+    <input class="changeable" name="field_condition_values_range" type="text" size="7" value="" style="display:none;" />
+  </td>
+  <td><input class="changeable" name="field_group" type="checkbox" value="" /></td>
+  <td>
+    <input class="changeable" name="field_order" type="checkbox" value="" />
+    <select class="changeable" name="field_order_values">
+      <option value="asc">asc</option>
+      <option value="desc">desc</option>
+    </select>
+  </td>
+  <td>
+    <input class="changeable" name="field_summary" type="checkbox" value="" />
+    <select class="changeable" name="field_summary_values">
+      <option value="sum">sum</option>
+      <option value="count">count</option>
+      <option value="max">max</option>
+      <option value="min">min</option>
+    </select>
+  </td>
+  <td><input class="changeable" name="field_use_in_range" type="checkbox" value="" /></td>
+
+  <script>
+    $(function() {
+      $(".field_remove").click(function(event) {
+        event.preventDefault();
+        
+        var name = $(this).closest('tr').attr('name');
+        $("#tree input[value='" + name + "']").prop('checked', false);
+        $(this).parent().parent().remove();
+        
+        updateTimestamps();
+        generateSQL();
+      });
+      
+      $('.changeable').change(function() {
+        if ($(this).attr("name") === "field_use_in_range") {
+          showRange($(this).parent().parent(), $(this).is(':checked'));
+        }
+        
+        generateSQL();
+      });
+      
+      $('.changeable').keyup(function() {
+        generateSQL();
+      });
+      
+      function showRange(tr, is_checked) {
+        var range = tr.find("input[name='field_condition_values_range']");
+        
+        if (is_checked)
+          range.show();
+        else {
+          range.val("");
+          range.hide();
+        }
+      }
+    });
+  </script>
+</tr>

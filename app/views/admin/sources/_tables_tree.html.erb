@@ -1,0 +1,54 @@
+<script>
+  $(function() {
+    $('.field_append').change(function() {
+      if ($(this).is(':checked'))
+        appendRow($(this));
+      else
+        deleteRow($(this));
+      
+      updateTimestamps();
+      generateSQL();
+    });
+    
+    $('.columns-toggle').click(function(event) {
+      event.preventDefault();
+      
+      $(this).parent().parent().children("td[id='columns-list']").toggle();
+    });
+    
+    function appendRow(column) {
+      var type = column.attr('field-type');
+      $('#fields tbody').append("<%= escape_javascript(render(:partial => 'field_element')) %>");
+      $('#fields tr:last').attr('row-id', ++field_rows);
+      
+      var values = /(.*)\[(.*)\]/g.exec(column.val());
+      $("#fields tr:last input[name='field_table']").val(values[1]);
+      $("#fields tr:last input[name='field_column']").val(values[2]);
+      $("#fields tr:last input[name='field_type']").val(type);
+      $('#fields tr:last').attr('name', values[1] + '[' + values[2] + ']');
+    }
+    
+    function deleteRow(column) {
+      $("#fields tr[name='" + column.val() + "']").remove();
+    }
+  });
+</script>
+
+<div id="tree" style="height: 200px; width: 900px; overflow-y: scroll;">
+  <table>
+    <% @tree.each do |table, columns| %>
+      <tr>
+        <td valign="top" id="tables-list">
+          <a href="#" class="columns-toggle"><%= table %></a>
+        </td>
+        <td style="display:none" id="columns-list">
+          <table>
+            <% columns.each do |column| %>
+              <tr><td><span class="ui-icon <%= img_class(column['column_type']) %>"></span></td><td><input type="checkbox" field-type="<%= column['column_type'] %>" class="field_append" value="<%= table %>[<%= column['column_name'] %>]" /><span><%= column['column_name'] %></span></td></tr>
+            <% end %>
+          </table>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

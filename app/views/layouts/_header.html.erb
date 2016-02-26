@@ -1,0 +1,99 @@
+<!-- https://www.graphicsprings.com/filestorage/stencils/19d68dbfbed202fd5a90a56e3f2552dc.svg -->
+<!-- http://img.dafont.com/preview.php?text=Demetra&ttf=atene3&ext=1&size=40&psize=s&y=54 -->
+
+<%= link_to image_tag('logo_text.png'), dashboards_url, class: 'logo' %>
+
+<style>
+  .menu-button {
+    float: right;
+    margin: 9px 2px 0px 0px;
+  }
+  .menu-button-last {
+    float: right;
+    margin: 9px 21px 0px 0px;
+  }  
+</style>
+
+<span class="button-dropdown menu-button-last" data-buttons="dropdown">
+  <a href="#" class="button button-pill button-flat">User &#8675;<i class="fa fa-caret-down"></i></a>
+  
+  <ul class="button-dropdown-menu-below">
+    <li><a href="#">Profile</a></li>
+    <li><a href="#">Settings</a></li>
+    <li class="button-dropdown-divider"><a href="#">Documentation</a></li>
+    <li class="button-dropdown-divider"><a href="#">Logout</a></li>
+  </ul>
+</span>
+
+<span class="button-dropdown menu-button" data-buttons="dropdown">
+  <a href="#" class="button button-pill button-flat">Administrator &#8675;<i class="fa fa-caret-down"></i></a>
+  
+  <ul class="button-dropdown-menu-below">
+    <li><a href="/admin/reports">Reports</a></li>
+    <li><a href="/admin/sources">Sources</a></li>
+    <li><a href="/admin/schedulers">Schedulers</a></li>
+    <li><a href="/admin/users">Users</a></li>
+    <li class="button-dropdown-divider"><a href="/admin/processes" target="_blank">Processes</a></li>
+  </ul>
+</span>
+
+<%= link_to "Alerts", alerts_url, class: "button button-pill button-flat menu-button" %>
+<%= link_to "Analytics", containers_url, class: "button button-pill button-flat menu-button" %>
+<%= link_to "Dashboards", dashboards_url, class: "button button-pill button-flat menu-button" %>
+
+<% if controller.controller_name == 'dashboards' %>
+  <script>
+    $(function() {
+      $("#dashboard-info").dialog({
+        modal: true,
+        autoOpen: false,
+        width: 500,
+        height: 300,
+        buttons: {
+          Ok: function() {
+            $.ajax({
+              url: '/dashboards',
+              method: 'post',
+              data: $('#dashboard-form').serialize()
+            }).done(function(data) {
+              if ($.isEmptyObject(data.messages))
+                $("#dashboard-info").dialog("close");
+            });
+          },
+          Cancel: function() {
+            $(this).dialog("close");
+          }
+        }
+      });
+      
+      $('#save-as').click(function() {
+        $('#dashboard_name').val('');
+
+        $("#dashboard-info").dialog("open");
+      });
+    });
+  </script>
+
+  <span class="button-dropdown menu-button" data-buttons="dropdown">
+    <a href="#" class="button button-pill button-flat">Actions &#8675;<i class="fa fa-caret-down"></i></a>
+
+    <ul class="button-dropdown-menu-below">
+      <li><a href="#" id="save">Save</a></li>
+      <li><a href="#" id="save-as">Save As</a></li>
+      <li><a href="#" id="export">Export</a></li>
+    </ul>
+  </span>
+
+  <div id="dashboard-info" title="Dashboard" style="display:none">
+    <p>
+      <%= form_tag '#', id: 'dashboard-form' do %>
+        <table>
+          <tr>
+            <td><%= label_tag 'dashboard[name]', 'Name' %></td>
+            <td><%= text_field_tag 'dashboard[name]' %></td>
+          </tr>
+        </table>
+      <% end %>
+    </p>
+  </div>
+<% end %>

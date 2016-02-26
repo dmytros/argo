@@ -1,0 +1,49 @@
+<style>
+  #reports { float: left; width: 100%; height: 100%; min-height: 12em; }
+  .reports.custom-state-active { background: #eee; }
+  .reports li { float: left; width: 165px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: left; }
+  .reports li h5 { margin: 0 0 0.4em; cursor: move; }
+  .reports li a { float: left; }
+  .reports li a.out { float: right; }
+</style>
+
+<script>
+  $(function() {
+    var $reports = $("#reports");
+ 
+    $("li", $reports).draggable({
+      cancel: "a.ui-icon",
+      revert: "invalid",
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });
+    
+    $reports.droppable({
+      accept: "#dashboard li",
+      activeClass: "custom-state-active",
+      drop: function(event, ui) {
+        //recycleImage( ui.draggable );
+        alert('hahaha2');
+      }
+    });
+
+  });
+</script>
+
+<div class="ui-widget ui-helper-clearfix">
+  <ul id="reports" class="reports ui-helper-reset ui-helper-clearfix">
+    <% for report in @reports %>
+      <li class="ui-widget-content ui-corner-tr" report-id=<%= report.id %>>
+        <h5 class="ui-widget-header"><%= truncate report.name, legth: 21 %></h5>
+        
+        <a href="#" title="Execute report" class="ui-icon ui-icon-play execute_item">Execute report</a>
+        <a href="#" title="Report settings" class="ui-icon ui-icon-gear">Report settings</a>
+        <a href="#" title="Delete report" class="ui-icon ui-icon-trash">Delete report</a>
+        <a href="#" title="Report result" class="ui-icon ui-icon-document">Report result</a>
+
+        <a href="#" title="Table" class="ui-icon ui-icon-calculator out">Table</a>
+      </li>
+    <% end %>
+  </ul>
+</div>

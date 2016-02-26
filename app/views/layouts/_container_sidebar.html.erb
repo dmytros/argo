@@ -1,0 +1,25 @@
+<script>
+  $(function() {
+    $("#accordion").accordion({
+      collapsible: true,
+      heightStyle: "content"
+    });
+  });
+</script>
+
+<div id="accordion">
+  <h3>Containers</h3>
+  <div>
+    <%= render 'containers/list' %>
+  </div>
+
+  <h3>Reports</h3>
+  <div>
+    <%= render 'reports/list' %>
+  </div>
+
+  <h3>Components</h3>
+  <div>
+    <%= render 'components/list' %>
+  </div>
+</div>

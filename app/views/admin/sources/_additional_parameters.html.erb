@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <td><%= label_tag :ranges %></td>
+    <td><%= select_tag :ranges, options_for_select(Report::RangeType::ALL), class: 'changeable' %></td>
+    <td><%= select_tag :ranges_column, nil, class: 'changeable' %></td>
+  </tr>
+  <tr>
+    <td><%= label_tag :limits %></td>
+    <td><%= select_tag :limits, options_for_select(['NO', 1, 5, 10, 25, 50, 100, 200, 500, 1000, 5000, 10000, 50000, 100000], 1000), class: 'changeable' %></td>
+    <td></td>
+  </tr>
+</table>

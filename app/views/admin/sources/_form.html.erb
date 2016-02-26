@@ -1,0 +1,75 @@
+<script>
+  $(function() {
+    var previous;
+    
+    $("#source_destination").on('focus', function () {
+      previous = $(this).val();
+    }).change(function() {
+      $('#' + previous + '_parameters').hide('slow');
+      $('#' + $(this).val() + '_parameters').show('slow');
+      
+      $('#' + previous + '_parameters').find('input').val('');
+      
+      previous = $(this).val();
+    });
+  });
+</script>
+
+<% if source.errors.any? %>
+  <ul>
+    <% source.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= form_for([:admin, source]) do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :destination %></td>
+      <td><%= f.select :destination, options_for_select(Source::DESTINATIONS, @source.destination) %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :name %></td>
+      <td><%= f.text_field :name %></td>
+    </tr>
+
+    <tbody id="database_parameters" style="<%= (@source.destination == Source::DESTINATIONS[0] ? "" : "display:none") %>">
+      <tr>
+        <td><%= f.label :username %></td>
+        <td><%= f.text_field :username %></td>
+      </tr>
+      <tr>
+        <td><%= f.label :host %></td>
+        <td><%= f.text_field :host %></td>
+      </tr>
+      <tr>
+        <td><%= f.label :port %></td>
+        <td><%= f.text_field :port %></td>
+      </tr>
+      <tr>
+        <td><%= f.label :database %></td>
+        <td><%= f.text_field :database %></td>
+      </tr>
+      <tr>
+        <td><%= f.label :password %></td>
+        <td><%= f.password_field :password %></td>
+      </tr>
+      <tr>
+        <td><%= f.label :adapter %></td>
+        <td><%= f.select :adapter, options_for_select(Source::ADAPTERS, @source.adapter) %></td>
+      </tr>
+    </tbody>
+    <tbody id="file_parameters" style="<%= @source.destination == Source::DESTINATIONS[1] ? "" : "display:none" %>">
+      <tr>
+        <td><%= f.label :path %></td>
+        <td><%= f.text_field :path %></td>
+      </tr>      
+    </tbody>
+    <tbody id="socket_parameters" style="<%= @source.destination == Source::DESTINATIONS[2] ? "" : "display:none" %>"></tbody>
+  </table>
+
+  <br/>
+  <%= f.submit  class: "button button-rounded" %>
+  <%= link_to 'Cancel', admin_sources_url, class: "button button-rounded" %>
+<% end %>

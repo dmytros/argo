@@ -1,0 +1,48 @@
+<style>
+  #dashboards { float: left; width: 100%; height: 100%; min-height: 12em; }
+  .dashboards.custom-state-active { background: #eee; }
+  .dashboards li { float: left; width: 165px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .dashboards li h5 { margin: 0 0 0.4em; cursor: move; }
+  .dashboards li a.in { float: left; }
+  .dashboards li a.out { float: right; }
+</style>
+
+<script>
+  $(function() {
+    var $dashboards = $("#dashboards");
+ 
+    $("li", $dashboards).draggable({
+      cancel: "a.ui-icon",
+      revert: "invalid",
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });
+    
+    $dashboards.droppable({
+      accept: "#dashboard li",
+      activeClass: "custom-state-active",
+      drop: function(event, ui) {
+        //recycleImage( ui.draggable );
+        alert('hahaha2');
+      }
+    });
+
+  });
+</script>
+
+<div class="ui-widget ui-helper-clearfix">
+  <ul id="containers" class="dashboards ui-helper-reset ui-helper-clearfix">
+    <% for dashboard in @dashboards %>
+      <li class="ui-widget-content ui-corner-tr">
+        <h5 class="ui-widget-header"><%= truncate dashboard.name, legth: 21 %></h5>
+        <% for input_cast in dashboard.input_casts %>
+          <a href="#" title="<%= input_cast.cast.name %>" class="ui-icon <%= img_class(input_cast.cast.sys) %> in"><%= input_cast.cast.name %></a>
+        <% end %>
+        <% for output_cast in container.output_casts %>
+          <a href="#" title="<%= output_cast.cast.name %>" class="ui-icon <%= img_class(output_cast.cast.sys) %> out"><%= output_cast.cast.name %></a>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

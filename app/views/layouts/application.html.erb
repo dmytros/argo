@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Demetra</title>
+  <%= stylesheet_link_tag '//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css' %>
+  
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  
+  <%= javascript_include_tag '//code.jquery.com/ui/1.11.4/jquery-ui.js' %>
+  
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <div id="head"><%= render 'layouts/header' %></div>
+  <div id="main">
+    <div id="left"><%= render 'layouts/container_sidebar' %></div>
+    <div id="right">
+      <%= render 'layouts/toolbar' %>
+      <%= yield %>
+    </div>
+  </div>
+  <div id="foot"><%= render 'layouts/footer' %></div>
+  <%= render 'layouts/executed_data' %>
+</body>
+</html>
