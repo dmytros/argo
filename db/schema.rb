@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20151001184116) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "alerts", force: :cascade do |t|
     t.string   "name"
     t.text     "expression"
@@ -65,7 +68,7 @@ ActiveRecord::Schema.define(version: 20151001184116) do
     t.datetime "updated_at",   null: false
   end
 
-  add_index "dashboard_widgets", ["entity_type", "entity_id"], name: "index_dashboard_widgets_on_entity_type_and_entity_id"
+  add_index "dashboard_widgets", ["entity_type", "entity_id"], name: "index_dashboard_widgets_on_entity_type_and_entity_id", using: :btree
 
   create_table "dashboards", force: :cascade do |t|
     t.string   "name"
@@ -85,7 +88,7 @@ ActiveRecord::Schema.define(version: 20151001184116) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "execute_details", ["executable_type", "executable_id"], name: "index_execute_details_on_executable_type_and_executable_id"
+  add_index "execute_details", ["executable_type", "executable_id"], name: "index_execute_details_on_executable_type_and_executable_id", using: :btree
 
   create_table "reports", force: :cascade do |t|
     t.string   "name"
