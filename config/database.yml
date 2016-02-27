@@ -58,6 +58,8 @@ development:
 test:
   <<: *default
   database: intelli_test
+  username: intelli
+  password: intelli
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -82,7 +84,7 @@ production:
   <<: *default
   database: intelli_production
   username: intelli
-  password: <%= ENV['XP_DATABASE_PASSWORD'] %>
+  password: <%= ENV['INTELLI_DATABASE_PASSWORD'] %>
 
 
 # SQLite version 3.x

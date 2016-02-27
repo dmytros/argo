@@ -83,7 +83,7 @@ function updateTimestamps() {
     var full_name = table + '.' + column;
     
     var type = $(this).find("input[name='field_type']").val();
-    if ('timestamp' === type) {
+    if ('timestamp' === type || 'datetime' === type) {
       timestamps.push(full_name);
       
       $('#ranges_column').append($("<option></option>").attr("value", full_name).text(full_name));

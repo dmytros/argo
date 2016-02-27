@@ -85,4 +85,41 @@ class SourceTest < ActiveSupport::TestCase
     
     assert true
   end
+
+  test "validations on save source to username field" do
+    source = Source.new
+
+    # should not be saved empty source
+    assert_not source.save
+
+    # should be next errors for next fields
+    assert_equal ["can't be blank"], source.errors.messages[:username]
+
+    # set to empty
+    source.username = ""
+    assert_not source.save
+    assert_equal ["can't be blank"], source.errors.messages[:username]
+
+    # set to nil
+    source.username = nil
+    assert_not source.save
+    assert_equal ["can't be blank"], source.errors.messages[:username]
+
+    # set to int
+    source.username = 123
+    assert_not source.save
+    assert_nil source.errors.messages[:username]
+
+    # set to special chars
+    source.username = '~!@#{$%^&*()_+|}'
+    assert_not source.save
+    assert_nil source.errors.messages[:username]
+
+    # set more than 255 symbols
+    source.username = '0123456789' * 26
+    assert_not source.save
+    assert_nil source.errors.messages[:username]
+
+    assert true
+  end
 end
