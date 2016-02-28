@@ -27,12 +27,14 @@
       $('#database_parameters').hide('slow');
       $('#file_parameters').hide('slow');
       $('#wizard_container').hide('slow');
+      $('#get_columns_container').hide('slow');
       
       var database_source_ids = $.parseJSON($('#database_sources').val());
       var file_source_ids = $.parseJSON($('#file_sources').val());
 
       if (file_source_ids.indexOf(parseInt(source_id)) >= 0) {
         $('#file_parameters').show('slow');
+        $('#get_columns_container').show('slow');
       } else if (database_source_ids.indexOf(parseInt(source_id)) >= 0) {
         $('#database_parameters').show('slow');
         $('#wizard_container').show('slow');
@@ -70,6 +72,40 @@
           $('#columns').html("<%= escape_javascript(render(:partial => 'admin/sources/tables_columns')) %>");
 
           $("#wizard").dialog("open");
+        });
+      } else {
+        alert('Please select soure before');
+      }
+    });
+
+    $('#get-columns-call').click(function(event) {
+      event.preventDefault();
+
+      $('#get_columns_spinner').show();
+      $('#get-columns-call').hide();
+
+      var source_id = $('#report_source_id option:selected').val();
+      $('#report_file_columns tbody tr').remove();
+
+      if (source_id !== '') {
+        $.ajax({
+          url: '/admin/reports/preview',
+          method: 'post',
+          data: {
+            report: {
+              sql: $('#report_sql').val(),
+              regular_expression: $('#report_regular_expression').val(),
+              name: $('#report_name').val(),
+              source_id: $('#report_source_id').val()
+            }
+          }
+        }).success(function(data) {
+          $.each(data['columns'], function(index, value) {
+            $('#report_file_columns > tbody:last-child').append('<tr><td>' + value + '</td><td><input type="text" name="columns[' + value  + ']"/></td></tr>');
+          });
+        }).done(function() {
+          $('#get_columns_spinner').hide();
+          $('#get-columns-call').show();
         });
       } else {
         alert('Please select soure before');
@@ -131,6 +167,13 @@
   <br/><br/>
 </div>
 
+<div id="get_columns_container" style="display:none">
+  <br/>
+  <a href="#" id="get-columns-call">Get Columns</a>
+  <div id="get_columns_spinner" style="display:none; float: left"><%= image_tag 'spinner-small.gif' %></div>
+  <br/><br/>
+</div>
+
 <%= hidden_field_tag 'database_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[0]}.compact.to_json %>
 <%= hidden_field_tag 'file_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[1]}.compact.to_json %>
 
@@ -155,7 +198,10 @@
         <td><%= f.label :regular_expression %></td>
         <td><%= f.text_area :regular_expression, size: "70x10" %></td>
         <td><span id="converted_expression"><%= Report.convert_macros(@report.regular_expression || '') %></span></td>
-      </tr>    
+      </tr>
+      <br/>
+      <table id="report_file_columns"><tbody></tbody></table>
+      <br/>
     </tbody>
     <tr>
       <td><%= f.label :observations_type %></td>

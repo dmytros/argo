@@ -65,6 +65,8 @@ class Report < ActiveRecord::Base
     ]
   end
   
+  attr_accessor :predefined_columns
+
   has_many :execute_details, as: :executable
   belongs_to :source
   after_commit :create_observations, on: [:create, :update]
@@ -110,7 +112,7 @@ class Report < ActiveRecord::Base
     rows = observations['data']
     while rows.size > 0
       rows_block = rows.shift(5)
-      sql = "INSERT INTO report_#{self.id}#{suffix}_observations (#{observations['columns'].join(', ')}) VALUES "
+      sql = "INSERT INTO report_#{self.id}#{suffix}_observations (#{self.get_columns(observations['columns']).join(', ')}) VALUES "
 
       items = []
       rows_block.each do |block|
@@ -201,6 +203,24 @@ class Report < ActiveRecord::Base
     Report.where.not(id: Scheduler.all.map(&:report_id))
   end
   
+  def get_columns(predefined = {})
+    gotten_columns = self.observations.columns rescue nil
+    unless gotten_columns.nil?
+      gotten_columns
+    else
+      missed = 0
+      predefined = self.predefined_columns unless self.predefined_columns.empty?
+      predefined.map do |column|
+        if column.empty?
+          missed += 1
+          "undefined#{missed}"
+        else
+          column
+        end
+      end
+    end
+  end
+
   private
   def generate_suffix(type)
     case type
@@ -221,7 +241,8 @@ class Report < ActiveRecord::Base
     unless suffix.empty?
       unless observations_tables.any? {|table| table.include?(suffix)}
         observations = self.execute(false)
-        create_observations_table(observations['columns'], self.observations_type)
+
+        create_observations_table(self.get_columns(observations['columns']), self.observations_type)
       end
     end
     
@@ -231,7 +252,8 @@ class Report < ActiveRecord::Base
   def create_observations
     drop_observations_table
     observations = self.execute(false)
-    create_observations_table(observations['columns'], self.observations_type)
+
+    create_observations_table(self.get_columns(observations['columns']), self.observations_type)
   end
   
   def create_observations_table(columns, type = ObservationsType::NONE)

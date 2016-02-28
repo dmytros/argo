@@ -10,6 +10,7 @@ class Admin::ReportsController < ApplicationController
   
   def create
     @report = Report.new(report_params)
+    @report.predefined_columns = params[:columns].values if params.has_key?('columns')
     if @report.save
       flash[:notice] = 'Report has been created'
       redirect_to admin_reports_url
@@ -19,6 +20,7 @@ class Admin::ReportsController < ApplicationController
   end
   
   def update
+    #@report.predefined_columns = params[:columns].values
     if @report.update_attributes(report_params)
       flash[:notice] = 'Report has been updated'
       redirect_to admin_reports_url
@@ -91,6 +93,6 @@ class Admin::ReportsController < ApplicationController
   end
   
   def report_params
-    params.require(:report).permit(:name, :sql, :regular_expression, :source_id, :observations_type)
+    params.require(:report).permit(:name, :sql, :regular_expression, :source_id, :observations_type, :columns)
   end
 end
