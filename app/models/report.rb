@@ -102,21 +102,31 @@ class Report < ActiveRecord::Base
   def observations_type_name
     ObservationsType::ALL.map {|t| t[1] === self.observations_type ? t[0] : nil}.compact[0] rescue "undefined"
   end
-  
+
+
   def store(observations)
     suffix = dedicate_observations_space
     
     rows = observations['data']
     while rows.size > 0
-      rows_block = rows.shift(1000)
+      rows_block = rows.shift(5)
       sql = "INSERT INTO report_#{self.id}#{suffix}_observations (#{observations['columns'].join(', ')}) VALUES "
-      
+
       items = []
       rows_block.each do |block|
         if self.source.use_database?
-          items << "(" + block.values.map{|value| '"' + value.to_s + '"'}.join(", ") + ")"
+          items << "(" + block.values.map{|value| 
+            value = '' if value.nil?
+
+            ActiveRecord::Base.connection.quote(value.slice(0..254).to_s)
+          }.join(", ") + ")"
         elsif self.source.use_file?
-          items << "(" + block.map{|value| '"' + value.to_s + '"'}.join(", ") + ")"
+          items << "(" + block.map{|value| 
+            value = '' if value.nil?
+            string = value.chomp.slice(0..254).to_s
+
+            ActiveRecord::Base.connection.quote(string)
+          }.join(", ") + ")"
         end
       end
       sql << items.join(', ')
@@ -124,7 +134,7 @@ class Report < ActiveRecord::Base
       ActiveRecord::Base.connection.exec_query(sql)
     end
   end
-  
+
   def observations(**settings)
     limits = ''
     if settings.has_key?(:limit)
