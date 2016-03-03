@@ -209,7 +209,8 @@ class Report < ActiveRecord::Base
       gotten_columns
     else
       missed = 0
-      predefined = self.predefined_columns unless self.predefined_columns.empty?
+      predefined = predefined if self.predefined_columns.nil?
+      predefined = self.predefined_columns unless self.predefined_columns.nil?
       predefined.map do |column|
         if column.empty?
           missed += 1
