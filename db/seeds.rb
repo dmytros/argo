@@ -21,6 +21,6 @@ Component.all.each { |co|
 [{name: 'Administrator', sys_name: 'admin'}, {name: 'User', sys_name: 'user'}].each do |role|
   Role.create(role)
 end
-User.create(name: 'admin', password: 'adminpwd', role_id: Role.first.id)
+User.create(name: 'admin', password: 'adminpwd', role_id: Role.where(sys_name: 'admin').first.id, is_active: true)
 
 ['table', 'line', 'column', 'pie'].each {|name| Widget.create(name: name.upcase, sys: name)}

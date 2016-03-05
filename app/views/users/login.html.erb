@@ -1,0 +1,17 @@
+<div class="login-box">
+  <div class="lb-header">
+    <a href="/users/login" class="active" id="login-box-link">Login</a>
+    <a href="/users/register" id="signup-box-link">Register</a>
+  </div>
+  <%= form_tag '', {class: 'email-login'} do %>
+    <div class="u-form-group">
+      <input type="text" name="name" placeholder="Username"/>
+    </div>
+    <div class="u-form-group">
+      <input type="password" name="password" placeholder="Password"/>
+    </div>
+    <div class="u-form-group">
+      <button>Log in</button>
+    </div>
+  <% end %>
+</div>

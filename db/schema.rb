@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151001184116) do
+ActiveRecord::Schema.define(version: 20160303223732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,134 @@ ActiveRecord::Schema.define(version: 20151001184116) do
 
   add_index "execute_details", ["executable_type", "executable_id"], name: "index_execute_details_on_executable_type_and_executable_id", using: :btree
 
+  create_table "report_13_observations", id: false, force: :cascade do |t|
+    t.string "date", limit: 255
+    t.string "a2",   limit: 255
+    t.string "a3",   limit: 255
+    t.string "a4",   limit: 255
+    t.string "a5",   limit: 255
+    t.string "a6",   limit: 255
+    t.string "a7",   limit: 255
+    t.string "a8",   limit: 255
+  end
+
+  create_table "report_19_observations", id: false, force: :cascade do |t|
+    t.string "column0",  limit: 255
+    t.string "column1",  limit: 255
+    t.string "column2",  limit: 255
+    t.string "column3",  limit: 255
+    t.string "column4",  limit: 255
+    t.string "column5",  limit: 255
+    t.string "column6",  limit: 255
+    t.string "column7",  limit: 255
+    t.string "column8",  limit: 255
+    t.string "column9",  limit: 255
+    t.string "column10", limit: 255
+    t.string "column11", limit: 255
+    t.string "column12", limit: 255
+    t.string "column13", limit: 255
+    t.string "column14", limit: 255
+    t.string "column15", limit: 255
+    t.string "column16", limit: 255
+    t.string "column17", limit: 255
+    t.string "column18", limit: 255
+    t.string "column19", limit: 255
+  end
+
+  create_table "report_1_observations", id: false, force: :cascade do |t|
+    t.string "column0", limit: 255
+    t.string "column1", limit: 255
+    t.string "column2", limit: 255
+    t.string "column3", limit: 255
+  end
+
+  create_table "report_20_observations", id: false, force: :cascade do |t|
+    t.string "column0", limit: 255
+    t.string "column1", limit: 255
+    t.string "column2", limit: 255
+    t.string "column3", limit: 255
+  end
+
+  create_table "report_2_observations", id: false, force: :cascade do |t|
+    t.string "column0",  limit: 255
+    t.string "column1",  limit: 255
+    t.string "column2",  limit: 255
+    t.string "column3",  limit: 255
+    t.string "column4",  limit: 255
+    t.string "column5",  limit: 255
+    t.string "column6",  limit: 255
+    t.string "column7",  limit: 255
+    t.string "column8",  limit: 255
+    t.string "column9",  limit: 255
+    t.string "column10", limit: 255
+    t.string "column11", limit: 255
+    t.string "column12", limit: 255
+    t.string "column13", limit: 255
+    t.string "column14", limit: 255
+    t.string "column15", limit: 255
+    t.string "column16", limit: 255
+    t.string "column17", limit: 255
+    t.string "column18", limit: 255
+    t.string "column19", limit: 255
+  end
+
+  create_table "report_3_observations", id: false, force: :cascade do |t|
+    t.string "column0", limit: 255
+    t.string "column1", limit: 255
+    t.string "column2", limit: 255
+    t.string "column3", limit: 255
+    t.string "column4", limit: 255
+  end
+
+  create_table "report_7_observations", id: false, force: :cascade do |t|
+    t.string "column0", limit: 255
+    t.string "column1", limit: 255
+    t.string "column2", limit: 255
+    t.string "column3", limit: 255
+    t.string "column4", limit: 255
+    t.string "column5", limit: 255
+    t.string "column6", limit: 255
+    t.string "column7", limit: 255
+  end
+
+  create_table "report_8_observations", id: false, force: :cascade do |t|
+    t.string "column0",  limit: 255
+    t.string "column1",  limit: 255
+    t.string "column2",  limit: 255
+    t.string "column3",  limit: 255
+    t.string "column4",  limit: 255
+    t.string "column5",  limit: 255
+    t.string "column6",  limit: 255
+    t.string "column7",  limit: 255
+    t.string "column8",  limit: 255
+    t.string "column9",  limit: 255
+    t.string "column10", limit: 255
+    t.string "column11", limit: 255
+    t.string "column12", limit: 255
+    t.string "column13", limit: 255
+    t.string "column14", limit: 255
+    t.string "column15", limit: 255
+    t.string "column16", limit: 255
+    t.string "column17", limit: 255
+    t.string "column18", limit: 255
+    t.string "column19", limit: 255
+    t.string "column20", limit: 255
+    t.string "column21", limit: 255
+    t.string "column22", limit: 255
+    t.string "column23", limit: 255
+    t.string "column24", limit: 255
+    t.string "column25", limit: 255
+  end
+
+  create_table "report_9_observations", id: false, force: :cascade do |t|
+    t.string "column0", limit: 255
+    t.string "column1", limit: 255
+    t.string "column2", limit: 255
+    t.string "column3", limit: 255
+    t.string "column4", limit: 255
+    t.string "column5", limit: 255
+  end
+
   create_table "reports", force: :cascade do |t|
     t.string   "name"
     t.text     "sql"
@@ -136,11 +264,12 @@ ActiveRecord::Schema.define(version: 20151001184116) do
 
   create_table "users", force: :cascade do |t|
     t.string   "name"
-    t.string   "password"
+    t.string   "hashed_password"
     t.string   "salt"
     t.integer  "role_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.boolean  "is_active",       default: false
   end
 
   create_table "widgets", force: :cascade do |t|

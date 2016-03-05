@@ -1,0 +1,28 @@
+<% if @user.errors.any? %>
+  <ul>
+    <% @user.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= form_for([:admin, @user]) do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :name %></td>
+      <td><%= f.text_field :name %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :role_id %></td>
+      <td><%= f.select :role_id, options_for_select(Role.all.map{|role| [role.name, role.id]}, @user.role_id) %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :password %></td>
+      <td><%= f.password_field :password %></td>
+    </tr>
+  </table>
+
+  <br/>
+  <%= f.submit  class: "button button-rounded" %>
+  <%= link_to 'Cancel', admin_users_url, class: "button button-rounded" %>
+<% end %>

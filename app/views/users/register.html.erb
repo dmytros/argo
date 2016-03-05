@@ -1,0 +1,18 @@
+<div class="login-box">
+  <div class="lb-header">
+    <a href="/users/login" id="login-box-link">Login</a>
+    <a href="/users/register" class="active" id="signup-box-link">Register</a>
+  </div>
+
+  <%= form_for :user, html: {class: 'email-signup'} do |f| %>
+    <div class="u-form-group">
+      <%= f.text_field :name, placeholder: 'Username' %>
+    </div>
+    <div class="u-form-group">
+      <%= f.password_field :password, placeholder: 'Password' %>
+    </div>
+    <div class="u-form-group">
+      <button>Register</button>
+    </div>
+  <% end %>
+</div>

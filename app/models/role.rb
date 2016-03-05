@@ -10,4 +10,7 @@
 #
 
 class Role < ActiveRecord::Base
+  def self.user
+    where(sys_name: 'user').first
+  end
 end

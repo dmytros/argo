@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get 'users/login'
+  post 'users/login'
+  get 'users/logout'
+  get 'users/register'
+  post 'users/register'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -123,6 +129,10 @@ Rails.application.routes.draw do
     resources :users do
       collection do
         get 'list'
+      end
+      member do
+        get 'activate'
+        get 'deactivate'
       end
     end
   end
