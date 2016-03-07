@@ -64,8 +64,10 @@
     <select class="changeable" name="field_summary_values">
       <option value="sum">sum</option>
       <option value="count">count</option>
+<!--
       <option value="max">max</option>
       <option value="min">min</option>
+-->
     </select>
   </td>
   <td><input class="changeable" name="field_use_in_range" type="checkbox" value="" /></td>
@@ -86,6 +88,10 @@
       $('.changeable').change(function() {
         if ($(this).attr("name") === "field_use_in_range") {
           showRange($(this).parent().parent(), $(this).is(':checked'));
+        }
+
+        if ($(this).attr("name") === "field_summary") {
+          $(this).parent().parent().parent().find("input:checkbox[name='field_group']").prop('checked', true);
         }
         
         generateSQL();

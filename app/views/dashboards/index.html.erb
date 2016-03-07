@@ -11,6 +11,39 @@
 <script>
   var gridster;
   
+  setInterval("updateCharts()", 10000);
+
+  function updateCharts() {
+    var widgets_times = $('input:hidden[name="refresh-at"]');
+    var current = new Date();
+
+    widgets_times.each(function() {
+      var next_call = $(this).val();
+
+      if (next_call) {
+        if (parseInt(current.getTime()) >= parseInt(next_call)) {
+          var widget = $(this).parent().parent().parent();
+          var entity_id = $(widget).find('input:hidden[name="widgets[][entity_id]"]');
+          var periods = $(widget).find('input:hidden[name="widgets[][refresh_time]"]');
+          var period = $(periods[0]).val();
+          
+          $(widget).find('input:hidden[name="refresh-at"]').val(parseInt(current.getTime()) + parseInt(period) * 60000);
+
+          renderWidget(
+            $(widget).find("#widgets_entity_id").val(),
+            $(widget).attr('widget-id'),
+            $(widget).find("#widgets_x_axis").val(),
+            $(widget).find("#widgets_y_axis").val(),
+            $(widget).find("#widgets_y_axis_as").val(),
+            $(widget).find("#widgets_x_axis_group").val(),
+            $(widget).find("#widgets_limits").val(),
+            $(widget)
+          );
+        }
+      }
+    });
+  }
+
   function removeWidget(widget) {
     gridster.remove_widget(widget.parent().parent().parent().parent());
   }
@@ -100,6 +133,7 @@
   }
 
   function appendWidgetParameters(widget) {
+    var current = new Date();
     var obj = widget.parent().parent().parent().parent();
     
     obj.find('#settings').remove();
@@ -119,6 +153,12 @@
     
     set.append('<input type="hidden" id="widgets_x_axis" name="widgets[][x_axis]" value="' + $('#x_axis').val() + '" />');
     set.append('<input type="hidden" id="widgets_y_axis" name="widgets[][y_axis]" value="' + $('#y_axis').val() + '" />');
+    set.append('<input type="hidden" id="widgets_y_axis_as" name="widgets[][y_axis_as]" value="' + $('#y_axis_as').val() + '" />');
+    set.append('<input type="hidden" id="widgets_x_axis_group" name="widgets[][x_axis_group]" value="' + $('#x_axis_group').val() + '" />');
+
+    if ($('#refresh_time').val() != 'NO') {
+      set.parent().find('input:hidden[name="refresh-at"]').val(current.getTime() + $('#refresh_time').val() * 60000);
+    }
     
     obj.find('.preview-image').remove();
     $('#last_call_widget_settings_position_id').val(obj.attr("position-id"));
@@ -128,12 +168,14 @@
       obj.attr('widget-id'), 
       $('#x_axis').val(), 
       $('#y_axis').val(), 
+      $('#y_axis_as').val(),
+      $('#x_axis_group').val(),
       $('#limits').val(), 
       obj
     );
   }
 
-  function renderWidget(report_id, widget_id, x, y, limit, widget) {
+  function renderWidget(report_id, widget_id, x, y, y_as, x_group, limit, widget) {
     widget.find('.box-content').prepend('<img src="/assets/spinner-big.gif" />');
     
     $.ajax({
@@ -143,7 +185,9 @@
         widget_id: widget_id,
         columns: {
           x_axis: x,
-          y_axis: y
+          y_axis: y,
+          y_axis_as: y_as,
+          x_axis_group: x_group
         },
         limit: limit
       }
@@ -166,6 +210,8 @@
               $widget.attr('widget-id'), 
               $widget.find("#widgets_x_axis").val(), 
               $widget.find("#widgets_y_axis").val(), 
+              $widget.find("#widgets_y_axis_as").val(), 
+              $widget.find("#widgets_x_axis_group").val(), 
               $widget.find("#widgets_limits").val(), 
               $widget
             );
@@ -215,6 +261,7 @@
                 '<i class="pull-right ui-icon ui-icon-refresh"></i>' + 
               '</a>' + 
             '</div>' +
+            '<input type="hidden" name="refresh-at" value="" />' +
           '</div>' +
           '<div class="box-content">' +
             '<img alt="' + type + '" src="/assets/' + type + '_big.png" class="preview-image">' +

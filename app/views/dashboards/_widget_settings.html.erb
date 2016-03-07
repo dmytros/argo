@@ -1,3 +1,15 @@
+<script>
+  $(function() {
+    $('#y_axis_as').change(function() {
+      if ($(this).val() != "") {
+        $('#group-options').show();
+      } else {
+        $('#group-options').hide();
+      }
+    });
+  });
+</script>
+
 <div id="widget-settings" title="Widget Settings" style="display:none">
   <table>
     <tr>
@@ -22,6 +34,14 @@
     <tr>
       <td>Y axis:</td>
       <td><%= select_tag 'y_axis' %></td>
+    </tr>
+    <tr>
+      <td>Y axis as:</td>
+      <td><%= select_tag 'y_axis_as', options_for_select(['', 'SUM', 'COUNT']) %></td>
+    </tr>
+    <tr id="group-options" style="display:none">
+      <td>X axis GROUP BY:</td>
+      <td><%= select_tag 'x_axis_group', options_for_select(['YYYY', 'YYYY-MM', 'YYYY-MM-DD', 'YYYY-MM-DD HH24', 'YYYY-MM-DD HH24:MI', 'YYYY-MM-DD HH24:MI:SS']) %></td>
     </tr>
   </table>
   

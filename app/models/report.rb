@@ -142,10 +142,20 @@ class Report < ActiveRecord::Base
     if settings.has_key?(:limit)
       limits = "LIMIT #{settings[:limit]}" if settings[:limit] != 'NO'
     end
+
+    columns = '*'
+    group = ''
+    if settings.has_key?(:group)
+      if settings[:group][:y_as] != ''
+        columns = "#{settings[:group][:y_as]}(#{settings[:group][:y_axis]}) AS #{settings[:group][:y_axis]}, "
+        columns += "TO_TIMESTAMP(#{settings[:group][:x_axis]}, '#{settings[:group][:format]}') AS #{settings[:group][:x_axis]}"
+        group = "GROUP BY TO_TIMESTAMP(#{settings[:group][:x_axis]}, '#{settings[:group][:format]}')"
+      end
+    end
     
-    tables = observations_tables.map {|table| "SELECT * FROM #{table}"}
+    tables = observations_tables.map {|table| "SELECT #{columns} FROM #{table} #{group}"}
     sql = "SELECT * FROM (" + tables.join(' UNION ') + ") AS main #{limits}"
-    
+
     ActiveRecord::Base.connection.exec_query(sql)
   end
   

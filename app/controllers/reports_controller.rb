@@ -17,7 +17,12 @@ class ReportsController < ApplicationController
   def display
     begin
       report = Report.find(params[:id])
-      data = report.observations(limit: params[:limit])
+      data = report.observations(limit: params[:limit], group: {
+        y_as: params[:columns][:y_axis_as], 
+        format: params[:columns][:x_axis_group],
+        x_axis: params[:columns][:x_axis],
+        y_axis: params[:columns][:y_axis]
+      })
       generated_id = (0...50).map { ('a'..'z').to_a[rand(26)] }.join
 
       if params[:widget_id] == Widget::Type::TABLE

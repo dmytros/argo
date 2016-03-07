@@ -46,6 +46,13 @@ function generateSQL() {
       
       orders.push(full_name_order);
     }
+
+    if ($(this).find("input[name='field_summary']").is(':checked')) {
+      var type = $(this).find("select[name='field_summary_values'] option:selected").val();
+
+      summary = type.toUpperCase() + '(' + full_name + ') AS ' + column + '_' + type;
+      columns.push(summary);
+    }
   });
   
   var timestamp = $('#ranges_column option:selected').val();
