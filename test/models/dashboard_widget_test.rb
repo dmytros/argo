@@ -17,6 +17,8 @@
 #  y_axis       :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  y_axis_as    :string
+#  x_axis_group :string
 #
 
 require 'test_helper'

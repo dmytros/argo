@@ -1,0 +1,26 @@
+<script>
+  $(function() {
+    $('#observations-list').dataTable({
+      "ajax": "/reports/<%= @report.id %>/observations_collection"
+    });
+  });
+</script>
+
+<h1>Report "<%= @report.name %>" observations</h1>
+<br/>
+<table id="observations-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <% @columns.each do |column| %>
+        <th><%= column %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <% @columns.each do |column| %>
+        <th><%= column %></th>
+      <% end %>
+    </tr>
+  </tfoot>
+</table>

@@ -7,11 +7,19 @@
         $('#group-options').hide();
       }
     });
+
+    $('#report_id').change(function() {
+      $('#name').val($('#report_id option:selected').text());
+    });
   });
 </script>
 
 <div id="widget-settings" title="Widget Settings" style="display:none">
   <table>
+    <tr>
+      <td>Name:</td>
+      <td><%= text_field_tag 'name' %></td>
+    </tr>
     <tr>
       <td>Reports:</td>
       <td><%= select_tag 'report_id' %></td>
@@ -45,6 +53,7 @@
     </tr>
   </table>
   
-  <a href="#" onclick="$('#last-values').toggle('slow')">debug info</a>
+  <br/>
+  <a href="#" onclick="$('#last-values').toggle('slow')">Show Lastest</a>
   <div id="last-values" style="display:none"></div>
 </div>

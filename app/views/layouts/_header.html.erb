@@ -37,9 +37,10 @@
   </ul>
 </span>
 
-<%= link_to "Alerts", alerts_url, class: "button button-pill button-flat menu-button" %>
-<%= link_to "Analytics", containers_url, class: "button button-pill button-flat menu-button" %>
-<%= link_to "Dashboards", dashboards_url, class: "button button-pill button-flat menu-button" %>
+<% link_to "Alerts", alerts_url, class: "button button-pill button-flat menu-button" %>
+<% link_to "Analytics", containers_url, class: "button button-pill button-flat menu-button" %>
+<a href="#" onclick="window.location.replace('/reports')" class="button button-pill button-flat menu-button">Reports</a>
+<a href="#" onclick="window.location.replace('/dashboards/new')" class="button button-pill button-flat menu-button">Dashboards</a>
 
 <% if controller.controller_name == 'dashboards' %>
   <script>
@@ -51,10 +52,20 @@
         height: 300,
         buttons: {
           Ok: function() {
+            var main = $('#dashboard-form').serialize();
+            var widgets = $('#dashboard').find('li');
+
+            var additional = '';
+            $.each(widgets, function() {
+              additional += '&' + $(this).find('#settings input:hidden').serialize();
+            });
+
+            var parameters = main + additional;
+
             $.ajax({
               url: '/dashboards',
               method: 'post',
-              data: $('#dashboard-form').serialize()
+              data: parameters
             }).done(function(data) {
               if ($.isEmptyObject(data.messages))
                 $("#dashboard-info").dialog("close");

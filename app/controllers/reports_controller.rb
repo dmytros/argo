@@ -1,23 +1,54 @@
 class ReportsController < ApplicationController
+  layout 'report'
+  before_action :set_report, except: [:list, :index]
+  include ApplicationHelper
+
+  def list
+    data = Report.all.map{|report|
+      actions = []
+      if report.observations.count > 0
+        actions << view_context.link_to('Observations', url_for([:observations, report]), class: "button button-pill button-flat")
+      end
+
+      [
+        report.name,
+        (report.source.name rescue ''),
+        (timestamp_format_tag(report.execute_details.last.created_at) rescue ''),
+        (bool_tag(report.execute_details.last.is_success) rescue ''),
+        ((spent_time_tag(report.execute_details.last.spent_time)) rescue ''),
+        (report.execute_details.last.rows_count rescue ''),
+        (report.execute_details.where(is_success: true).count rescue ''),
+        (report.execute_details.where(is_success: false).count rescue ''),
+        actions.join(' ')
+      ]
+    }
+
+    render json: {'data' => data}.to_json
+  end
+
+  def observations
+    @columns = @report.observations.first.keys
+  end
+
+  def observations_collection
+    render json: {'data' => @report.observations.map(&:values)}.to_json
+  end
+
   def execute
-    report = Report.find(params[:id])
-    render json: report.execute
+    render json: @report.execute
   end
   
   def columns
-    report = Report.find(params[:id])
-    render json: report.observations(limit: 1).columns
+    render json: @report.observations(limit: 1).columns
   end
   
   def last_value
-    report = Report.find(params[:id])
-    render text: report.observations(limit: 1).last.inspect
+    render text: @report.observations(limit: 1).last.inspect
   end
   
   def display
     begin
-      report = Report.find(params[:id])
-      data = report.observations(limit: params[:limit], group: {
+      data = @report.observations(limit: params[:limit], group: {
         y_as: params[:columns][:y_axis_as], 
         format: params[:columns][:x_axis_group],
         x_axis: params[:columns][:x_axis],
@@ -66,5 +97,10 @@ class ReportsController < ApplicationController
     rescue Exception => e
       render partial: 'dashboards/widgets/error', locals: {msg: e.message}
     end
+  end
+
+  private
+  def set_report
+    @report = Report.find(params[:id])
   end
 end

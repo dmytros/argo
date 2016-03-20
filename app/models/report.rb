@@ -140,7 +140,7 @@ class Report < ActiveRecord::Base
   def observations(**settings)
     limits = ''
     if settings.has_key?(:limit)
-      limits = "LIMIT #{settings[:limit]}" if settings[:limit] != 'NO'
+      limits = "LIMIT #{settings[:limit]}" if settings[:limit] != 'NO' && settings[:limit] != '0'
     end
 
     columns = '*'

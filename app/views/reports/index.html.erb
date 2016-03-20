@@ -1,0 +1,41 @@
+<script>
+  $(function() {
+    $('#reports-list').dataTable({
+      "ajax": "/reports/list",
+      "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [8] }
+      ]
+    });
+  });
+</script>
+
+<h1>Reports list</h1>
+<br/>
+<table id="reports-list" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Source</th>
+      <th>Last Execute Time</th>
+      <th>Last Execute Status</th>
+      <th>Last Execute Spent Time</th>
+      <th>Last Execute Rows Count</th>
+      <th>Success</th>
+      <th>Failed</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Name</th>
+      <th>Source</th>
+      <th>Last Execute Time</th>
+      <th>Last Execute Status</th>
+      <th>Last Execute Spent Time</th>
+      <th>Last Execute Rows Count</th>
+      <th>Success</th>
+      <th>Failed</th>
+      <th>Actions</th>
+    </tr>
+  </tfoot>
+</table>

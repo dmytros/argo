@@ -27,11 +27,17 @@ Rails.application.routes.draw do
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
   resources :reports do
+    collection do
+      get 'list'
+    end
+
     member do
       get 'execute'
       get 'columns'
       post 'display'
       get 'last_value'
+      get 'observations'
+      get 'observations_collection'
     end
   end
   
@@ -39,6 +45,9 @@ Rails.application.routes.draw do
     collection do
       get 'widget_settings'
       post 'save_as'
+    end
+    member do
+      get 'widgets'
     end
   end
   get 'dashboards/widget_data/:id' => 'dashboards#widget_data'

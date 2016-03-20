@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160303223732) do
+ActiveRecord::Schema.define(version: 20160310200545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,9 @@ ActiveRecord::Schema.define(version: 20160303223732) do
     t.string   "y_axis"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "y_axis_as"
+    t.string   "x_axis_group"
+    t.string   "name"
   end
 
   add_index "dashboard_widgets", ["entity_type", "entity_id"], name: "index_dashboard_widgets_on_entity_type_and_entity_id", using: :btree
