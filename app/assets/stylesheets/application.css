@@ -47,3 +47,12 @@ table.gridtable td {
 	border-color: #666666;
 	background-color: #ffffff;
 }
+
+img.widget_spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -35px;
+  margin-left: -25px;
+}
+

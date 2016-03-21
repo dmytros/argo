@@ -18,47 +18,52 @@ function updateCharts() {
 
         $(widget).find('input:hidden[name="refresh-at"]').val(parseInt(current.getTime()) + parseInt(period) * 60000);
 
-        renderWidget(
-          $(widget).find("#widgets_entity_id").val(),
-          $(widget).attr('widget-id'),
-          $(widget).find("#widgets_x_axis").val(),
-          $(widget).find("#widgets_y_axis").val(),
-          $(widget).find("#widgets_y_axis_as").val(),
-          $(widget).find("#widgets_x_axis_group").val(),
-          $(widget).find("#widgets_limits").val(),
-          $(widget)
-        );
+        var settings = {
+          report_id: $(widget).find("#widgets_entity_id").val(),
+          widget_id: $(widget).attr('widget-id'),
+          x_axis: $(widget).find("#widgets_x_axis").val(),
+          y_axis: $(widget).find("#widgets_y_axis").val(),
+          y_axis_as: $(widget).find("#widgets_y_axis_as").val(),
+          x_axis_group: $(widget).find("#widgets_x_axis_group").val(),
+          limits:  $(widget).find("#widgets_limits").val(),
+        };
+
+        renderWidget($(widget), settings);
       }
     }
   });
 }
 
-function renderWidget(report_id, widget_id, x, y, y_as, x_group, limit, widget) {
-  widget.find('.box-content').prepend('<img src="/assets/spinner-big.gif" />');
+function renderWidget(widget, settings) {
+  widget.find('.box-content').html('');
+  widget.find('.box-content').prepend('<img class="widget_spinner" src="/assets/spinner-big.gif" />');
 
   $.ajax({
-    url: "/reports/" + report_id + "/display",
+    url: "/reports/" + settings.report_id + "/display",
     method: 'post',
     data: {
-      widget_id: widget_id,
+      widget_id: settings.widget_id,
       columns: {
-        x_axis: x,
-        y_axis: y,
-        y_axis_as: y_as,
-        x_axis_group: x_group
+        x_axis: settings.x_axis,
+        y_axis: settings.y_axis,
+        y_axis_as: settings.y_axis_as,
+        x_axis_group: settings.x_axis_group
       },
-      limit: limit
+      limits: settings.limits
     }
   }).done(function(data) {
     widget.find('.box-content').html(data);
   });
 }
 
-function boxContent(type, has_image = true) {
+function boxContent(type, has_image, name) {
+  var has_image = typeof has_image !== 'undefined' ? has_image : true;
+  var name = typeof name !== 'undefined' ? name : 'New Widget';
+
   var box =
     '<div class="box">' +
       '<div class="box-header">' +
-        '<h3>New Widget</h3>' +
+        '<h3>' + name + '</h3>' +
         '<div class="box-header-btns pull-right">' +
           '<a href="#" title="Remove Widget" onclick="removeWidget($(this))">' +
             '<i class="pull-right ui-icon ui-icon-closethick"></i>' +
@@ -208,17 +213,28 @@ function appendWidgetParameters(widget) {
 
   obj.find('.preview-image').remove();
   $('#last_call_widget_settings_position_id').val(obj.attr("position-id"));
+  obj.find('.box-header h3').text($('#name').val());
 
-  renderWidget(
-    $('#report_id').val(),
-    obj.attr('widget-id'),
-    $('#x_axis').val(),
-    $('#y_axis').val(),
-    $('#y_axis_as').val(),
-    $('#x_axis_group').val(),
-    $('#limits').val(),
-    obj
-  );
+  var settings = {
+    report_id: $('#report_id').val(), 
+    widget_id: obj.attr('widget-id'), 
+    x_axis: $('#x_axis').val(), 
+    y_axis: $('#y_axis').val(), 
+    y_axis_as: $('#y_axis_as').val(), 
+    x_axis_group: $('#x_axis_group').val(), 
+    limits:  $('#limits').val()
+  };
+
+  renderWidget(obj, settings);
+}
+
+function rerangeWidgetsSizes() {
+  $.each($('#dashboard ul li'), function(index, widget) {
+    $(widget).find('input[name="widgets[][left]"]').val($(widget).attr('data-col'));
+    $(widget).find('input[name="widgets[][top]"]').val($(widget).attr('data-row'));
+    $(widget).find('input[name="widgets[][width]"]').val($(widget).attr('data-sizex'));
+    $(widget).find('input[name="widgets[][height]"]').val($(widget).attr('data-sizey'));
+  });
 }
 
 $(function() {
@@ -228,19 +244,22 @@ $(function() {
     resize: {
       enabled: true,
       stop: function(e, ui, $widget) {
+        rerangeWidgetsSizes();
+
         if ($widget.attr("widget-type") !== "table" && $widget.find("#settings").length) {
           $widget.find('.box-content').html("");
 
-          renderWidget(
-            $widget.find("#widgets_entity_id").val(),
-            $widget.attr('widget-id'),
-            $widget.find("#widgets_x_axis").val(),
-            $widget.find("#widgets_y_axis").val(),
-            $widget.find("#widgets_y_axis_as").val(),
-            $widget.find("#widgets_x_axis_group").val(),
-            $widget.find("#widgets_limits").val(),
-            $widget
-          );
+          var settings = {
+            report_id: $widget.find("#widgets_entity_id").val(),
+            widget_id: $widget.attr('widget-id'),
+            x_axis: $widget.find("#widgets_x_axis").val(),
+            y_axis: $widget.find("#widgets_y_axis").val(),
+            y_axis_as: $widget.find("#widgets_y_axis_as").val(),
+            x_axis_group: $widget.find("#widgets_x_axis_group").val(),
+            limits:  $widget.find("#widgets_limits").val(),
+          };
+
+          renderWidget($widget, settings);
         }
       }
     }

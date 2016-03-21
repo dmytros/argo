@@ -24,10 +24,22 @@
         var widget_id = widget.widget_id;
         var widget_type = widget.widget.sys;
 
-        var box = boxContent(widget_type, false);
+        var box = boxContent(widget_type, false, widget.name);
 
         gridster.add_widget('<li widget-id="' + widget_id + '" position-id="' + li_count + '" widget-type="' + widget_type + '">' + box + '</li>', widget.width, widget.height);
-        renderWidget(widget.entity_id, widget.widget_id, widget.x_axis, widget.y_axis, widget.y_axis_as, widget.x_axis_group, widget.limits, $('li[position-id=' + li_count + ']'));
+
+        var settings = {
+          report_id: widget.entity_id,
+          widget_id: widget.widget_id,
+          x_axis: widget.x_axis,
+          y_axis: widget.y_axis,
+          y_axis_as: widget.y_axis_as,
+          x_axis_group: widget.x_axis_group,
+          limits: widget.limits,
+          name: widget.name
+        };
+
+        renderWidget($('li[position-id=' + li_count + ']'), settings);
       });
     });
   });

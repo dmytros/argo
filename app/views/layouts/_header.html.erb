@@ -45,6 +45,13 @@
 <% if controller.controller_name == 'dashboards' %>
   <script>
     $(function() {
+      $("#dashboard-save-dialog").dialog({
+        modal: true,
+        autoOpen: false,
+        width: 500,
+        height: 150
+      });
+
       $("#dashboard-info").dialog({
         modal: true,
         autoOpen: false,
@@ -67,8 +74,10 @@
               method: 'post',
               data: parameters
             }).done(function(data) {
-              if ($.isEmptyObject(data.messages))
+              if ($.isEmptyObject(data.messages)) {
                 $("#dashboard-info").dialog("close");
+                window.location.replace("/dashboards/" + data.dashboard_id);
+              }
             });
           },
           Cancel: function() {
@@ -77,6 +86,32 @@
         }
       });
       
+      $('#save').click(function() {
+        var widgets_count = $('#dashboard ul li').length;
+
+        if (widgets_count > 0) {
+          var activated = $('#dashboard ul li #settings').length;
+
+          if (widgets_count == activated) {
+            $('#dashboard_name').val('');
+
+            $("#dashboard-info").dialog("open");
+          } else {
+            msg = 'There ';
+            if (widgets_count - activated == 1) {
+              msg += 'is widget at dashboard that has';
+            } else {
+              msg += 'are widgets at dashboard that have'
+            }
+            msg += ' not parameters to display data';
+
+            $('#dashboard-save-dialog p').text(msg);
+            $('#dashboard-save-dialog').dialog("open");
+          }
+        } else {
+        }
+      });
+
       $('#save-as').click(function() {
         $('#dashboard_name').val('');
 
@@ -107,4 +142,6 @@
       <% end %>
     </p>
   </div>
+
+  <div id="dashboard-save-dialog" title="Dashboard" style="display:none"><p></p></div>
 <% end %>
