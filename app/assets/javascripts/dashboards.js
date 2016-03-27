@@ -158,47 +158,52 @@ function changeWidgetSettings(widget) {
 
   function validInputParameters() {
     var validated = true;
-    var msg = '';
+    $('#error-message li').remove();
 
     if (!$('#name').val()) {
       msg = 'Name cannot be blank';
+      $('#error-message').append('<li>' + msg + '</li>');
     }
 
     if (!$('#report_id option:selected').text()) {
       msg = 'Report Name value cannot be blank';
+      $('#error-message').append('<li>' + msg + '</li>');
     }
 
     if (!$('#refresh_time option:selected').text()) {
       msg = 'Refresh Time value cannot be blank';
+      $('#error-message').append('<li>' + msg + '</li>');
     }
 
     if (!$('#limits option:selected').text()) {
       msg = 'Limit value cannot be blank';
+      $('#error-message').append('<li>' + msg + '</li>');
     }
 
     if ($('#x_axis').is(':visible')) {
       if (!$('#x_axis option:selected').text()) {
         msg = 'X Axis value cannot be blank';
+        $('#error-message').append('<li>' + msg + '</li>');
       }
     }
 
     if ($('#y_axis').is(':visible')) {
       if (!$('#y_axis option:selected').text()) {
         msg = 'Y Axis value cannot be blank';
+        $('#error-message').append('<li>' + msg + '</li>');
       }
     }
 
     if ($('#x_axis_group').is(':visible')) {
       if (!$('#x_axis_group option:selected').text()) {
          msg = 'X Axis Group value cannot be blank';
+         $('#error-message').append('<li>' + msg + '</li>');
       }
     }
 
     if (msg) {
       validated = false;
     }
-
-    $('#error-message').html(msg);
 
     return validated;
   }
