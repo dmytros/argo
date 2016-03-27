@@ -43,7 +43,7 @@ class ReportsController < ApplicationController
   end
   
   def last_value
-    render text: @report.observations(limits: 1).last.inspect
+    render json: @report.observations(limits: 1).last
   end
   
   def display

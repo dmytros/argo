@@ -94,9 +94,9 @@ function removeWidget(widget) {
 }
 
 function changeWidgetSettings(widget) {
-  var w = widget.parent().parent().parent().parent();
+  var obj = widget.parent().parent().parent().parent();
 
-  if (w.attr('widget-id') > 1) {
+  if (obj.attr('widget-id') > 1) {
     $('#columns-options').show();
   } else {
     $('#columns-options').hide();
@@ -144,7 +144,7 @@ function changeWidgetSettings(widget) {
     height: 500,
     buttons: {
       Ok: function() {
-        if (validInputParameters()) {
+        if (validInputParameters(widget)) {
           appendWidgetParameters(widget);
 
           $(this).dialog("close");
@@ -156,9 +156,11 @@ function changeWidgetSettings(widget) {
     }
   });
 
-  function validInputParameters() {
+  function validInputParameters(widget) {
     var validated = true;
+    var msg = '';
     $('#error-message li').remove();
+    var obj = widget.parent().parent().parent().parent();
 
     if (!$('#name').val()) {
       msg = 'Name cannot be blank';
@@ -192,6 +194,12 @@ function changeWidgetSettings(widget) {
         msg = 'Y Axis value cannot be blank';
         $('#error-message').append('<li>' + msg + '</li>');
       }
+
+      // line begins
+      if (obj.attr('widget-id') == 2) {
+        
+      }
+      // line ends
     }
 
     if ($('#x_axis_group').is(':visible')) {
@@ -226,14 +234,45 @@ function loadReportColumns(report_id) {
 }
 
 function loadReportLastValues(report_id) {
+  $('#last-values-structured tr').remove();
   $('#last-values').html();
 
   $.ajax({
     url: '/reports/' + report_id + '/last_value',
     method: 'get'
   }).success(function(data) {
-    $('#last-values').text(data);
+    $('#last-values').text(JSON.stringify(data));
+
+    $.each(data, function(column, value) {
+      $('#last-values-structured').append('<tr><td>&nbsp;' + column + '&nbsp;</td><td>&nbsp;' + value + '&nbsp;</td><td>&nbsp;' + defineCast(value) + '&nbsp;</td></tr>');
+    });
   });
+}
+
+function defineCast(value) {
+  var integer = /^[+-]?\d+$/;
+  var float = /^[+-]?\d+\.\d*$/;
+  var date = Date.parse(value);
+
+  if (integer.test(value)) {
+    return 'Integer';
+  } else if (float.test(value)) {
+    return 'Float';
+  } else {
+    var type = 'String';
+    if (!isNaN(date)) {
+      var num_items = value.split(/[^0-9]/);
+      num_items = num_items.filter(function(e){return e});
+//      var str_items = value.split(/[^a-zA-Z]/);
+//      str_items = str_items.filter(function(e){return e});
+
+      if ($.inArray(new Date(date).getDate(), num_items) && num_items.length >= 2) {
+        type = 'Timestamp';
+      }
+    }
+
+    return type;
+  }
 }
 
 function appendWidgetParameters(widget) {

@@ -56,3 +56,10 @@ img.widget_spinner {
   margin-left: -25px;
 }
 
+table#last-values-structured {
+  border-collapse: collapse;
+}
+
+td#last-values-structured {
+  border: 1px solid #0f0f0f;
+}
