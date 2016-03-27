@@ -19,7 +19,7 @@ function updateCharts() {
         $(widget).find('input:hidden[name="refresh-at"]').val(parseInt(current.getTime()) + parseInt(period) * 60000);
 
         var settings = {
-          report_id: $(widget).find("#widgets_entity_id").val(),
+          entity_id: $(widget).find("#widgets_entity_id").val(),
           widget_id: $(widget).attr('widget-id'),
           x_axis: $(widget).find("#widgets_x_axis").val(),
           y_axis: $(widget).find("#widgets_y_axis").val(),
@@ -39,7 +39,7 @@ function renderWidget(widget, settings) {
   widget.find('.box-content').prepend('<img class="widget_spinner" src="/assets/spinner-big.gif" />');
 
   $.ajax({
-    url: "/reports/" + settings.report_id + "/display",
+    url: "/reports/" + settings.entity_id + "/display",
     method: 'post',
     data: {
       widget_id: settings.widget_id,
@@ -144,15 +144,64 @@ function changeWidgetSettings(widget) {
     height: 500,
     buttons: {
       Ok: function() {
-        appendWidgetParameters(widget);
+        if (validInputParameters()) {
+          appendWidgetParameters(widget);
 
-        $(this).dialog("close");
+          $(this).dialog("close");
+        }
       },
       Cancel: function() {
         $(this).dialog("close");
       }
     }
   });
+
+  function validInputParameters() {
+    var validated = true;
+    var msg = '';
+
+    if (!$('#name').val()) {
+      msg = 'Name cannot be blank';
+    }
+
+    if (!$('#report_id option:selected').text()) {
+      msg = 'Report Name value cannot be blank';
+    }
+
+    if (!$('#refresh_time option:selected').text()) {
+      msg = 'Refresh Time value cannot be blank';
+    }
+
+    if (!$('#limits option:selected').text()) {
+      msg = 'Limit value cannot be blank';
+    }
+
+    if ($('#x_axis').is(':visible')) {
+      if (!$('#x_axis option:selected').text()) {
+        msg = 'X Axis value cannot be blank';
+      }
+    }
+
+    if ($('#y_axis').is(':visible')) {
+      if (!$('#y_axis option:selected').text()) {
+        msg = 'Y Axis value cannot be blank';
+      }
+    }
+
+    if ($('#x_axis_group').is(':visible')) {
+      if (!$('#x_axis_group option:selected').text()) {
+         msg = 'X Axis Group value cannot be blank';
+      }
+    }
+
+    if (msg) {
+      validated = false;
+    }
+
+    $('#error-message').html(msg);
+
+    return validated;
+  }
 }
 
 function loadReportColumns(report_id) {
@@ -216,7 +265,7 @@ function appendWidgetParameters(widget) {
   obj.find('.box-header h3').text($('#name').val());
 
   var settings = {
-    report_id: $('#report_id').val(), 
+    entity_id: $('#report_id').val(), 
     widget_id: obj.attr('widget-id'), 
     x_axis: $('#x_axis').val(), 
     y_axis: $('#y_axis').val(), 
@@ -226,6 +275,33 @@ function appendWidgetParameters(widget) {
   };
 
   renderWidget(obj, settings);
+}
+
+function addParameters(obj, widget) {
+  var current = new Date();
+
+  obj.append('<div id="settings"></div>');
+  var set = obj.find('#settings');
+
+  set.append('<input type="hidden" id="widgets_name" name="widgets[][name]" value="' + widget.name + '" />');
+  set.append('<input type="hidden" id="widgets_entity_id" name="widgets[][entity_id]" value="' + widget.entity_id + '" />');
+  set.append('<input type="hidden" name="widgets[][entity_type]" value="reports" />');
+  set.append('<input type="hidden" name="widgets[][refresh_time]" value="' + widget.refresh_time + '" />');
+  set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="' + widget.limits + '" />');
+  set.append('<input type="hidden" name="widgets[][widget_id]" value="' + widget.widget_id + '" />');
+  set.append('<input type="hidden" name="widgets[][top]" value="' + widget.top + '" />');
+  set.append('<input type="hidden" name="widgets[][left]" value="' + widget.left + '" />');
+  set.append('<input type="hidden" name="widgets[][width]" value="' + widget.width + '" />');
+  set.append('<input type="hidden" name="widgets[][height]" value="' + widget.height + '" />');
+
+  set.append('<input type="hidden" id="widgets_x_axis" name="widgets[][x_axis]" value="' + widget.x_axis + '" />');
+  set.append('<input type="hidden" id="widgets_y_axis" name="widgets[][y_axis]" value="' + widget.y_axis + '" />');
+  set.append('<input type="hidden" id="widgets_y_axis_as" name="widgets[][y_axis_as]" value="' + widget.y_axis_as + '" />');
+  set.append('<input type="hidden" id="widgets_x_axis_group" name="widgets[][x_axis_group]" value="' + widget.x_axis_group + '" />');
+
+  if (widget.refresh_time != 0) {
+    set.parent().find('input:hidden[name="refresh-at"]').val(current.getTime() + widget.refresh_time * 60000);
+  }
 }
 
 function rerangeWidgetsSizes() {
@@ -250,7 +326,7 @@ $(function() {
           $widget.find('.box-content').html("");
 
           var settings = {
-            report_id: $widget.find("#widgets_entity_id").val(),
+            entity_id: $widget.find("#widgets_entity_id").val(),
             widget_id: $widget.attr('widget-id'),
             x_axis: $widget.find("#widgets_x_axis").val(),
             y_axis: $widget.find("#widgets_y_axis").val(),

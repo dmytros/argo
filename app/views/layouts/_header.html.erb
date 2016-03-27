@@ -52,6 +52,37 @@
         height: 150
       });
 
+      function saveDashboard() {
+        var main = $('#dashboard-form').serialize();
+        var widgets = $('#dashboard').find('li');
+
+        var additional = '';
+        $.each(widgets, function() {
+          additional += '&' + $(this).find('#settings input:hidden').serialize();
+        });
+
+        var parameters = main + additional;
+        var url = '/dashboards';
+        var method = 'POST';
+        var dashboard_id = $('#dashboard_id').val();
+
+        if (dashboard_id) {
+          url += '/' + dashboard_id;
+          method = 'PUT';
+        }
+
+        $.ajax({
+          url: url,
+          method: method,
+          data: parameters
+        }).done(function(data) {
+          if ($.isEmptyObject(data.messages)) {
+            $("#dashboard-info").dialog("close");
+            window.location.replace("/dashboards/" + data.dashboard_id);
+          }
+        });
+      }
+
       $("#dashboard-info").dialog({
         modal: true,
         autoOpen: false,
@@ -59,26 +90,7 @@
         height: 300,
         buttons: {
           Ok: function() {
-            var main = $('#dashboard-form').serialize();
-            var widgets = $('#dashboard').find('li');
-
-            var additional = '';
-            $.each(widgets, function() {
-              additional += '&' + $(this).find('#settings input:hidden').serialize();
-            });
-
-            var parameters = main + additional;
-
-            $.ajax({
-              url: '/dashboards',
-              method: 'post',
-              data: parameters
-            }).done(function(data) {
-              if ($.isEmptyObject(data.messages)) {
-                $("#dashboard-info").dialog("close");
-                window.location.replace("/dashboards/" + data.dashboard_id);
-              }
-            });
+            saveDashboard();
           },
           Cancel: function() {
             $(this).dialog("close");
@@ -88,16 +100,21 @@
       
       $('#save').click(function() {
         var widgets_count = $('#dashboard ul li').length;
+        var is_new = $('#dashboard_id').length == 0;
 
         if (widgets_count > 0) {
           var activated = $('#dashboard ul li #settings').length;
 
           if (widgets_count == activated) {
             $('#dashboard_name').val('');
-
-            $("#dashboard-info").dialog("open");
+            
+            if (is_new) {
+              $("#dashboard-info").dialog("open");
+            } else {
+              saveDashboard();
+            }
           } else {
-            msg = 'There ';
+            msg = 'Dashboard cannot be saved. There ';
             if (widgets_count - activated == 1) {
               msg += 'is widget at dashboard that has';
             } else {
@@ -125,8 +142,10 @@
 
     <ul class="button-dropdown-menu-below">
       <li><a href="#" id="save">Save</a></li>
+<!--
       <li><a href="#" id="save-as">Save As</a></li>
       <li><a href="#" id="export">Export</a></li>
+-->
     </ul>
   </span>
 

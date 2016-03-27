@@ -39,16 +39,16 @@ class ReportsController < ApplicationController
   end
   
   def columns
-    render json: @report.observations(limit: 1).columns
+    render json: @report.observations(limits: 1).columns
   end
   
   def last_value
-    render text: @report.observations(limit: 1).last.inspect
+    render text: @report.observations(limits: 1).last.inspect
   end
   
   def display
     begin
-      data = @report.observations(limit: params[:limit], group: {
+      data = @report.observations(limits: params[:limits], group: {
         y_as: params[:columns][:y_axis_as], 
         format: params[:columns][:x_axis_group],
         x_axis: params[:columns][:x_axis],
@@ -71,7 +71,7 @@ class ReportsController < ApplicationController
         if params[:widget_id] == Widget::Type::LINE
           render partial: 'dashboards/widgets/line', locals: {
             line_id: generated_id,
-            columns: params[:columns],
+            columns: {x_axis: params[:columns][:x_axis], y_axis: params[:columns][:y_axis]},
             data: data.rows.map {|row|
               [Date.parse(row[columns_positions[0]]), row[columns_positions[1]]]
             }
@@ -79,7 +79,7 @@ class ReportsController < ApplicationController
         elsif params[:widget_id] == Widget::Type::COLUMN
           render partial: 'dashboards/widgets/column', locals: {
             column_id: generated_id,
-            columns: params[:columns],
+            columns: {x_axis: params[:columns][:x_axis], y_axis: params[:columns][:y_axis]},
             data: data.rows.map {|row|
               [row[columns_positions[0]], row[columns_positions[1]]]
             }
@@ -87,7 +87,7 @@ class ReportsController < ApplicationController
         elsif params[:widget_id] == Widget::Type::PIE
           render partial: 'dashboards/widgets/pie', locals: {
             column_id: generated_id,
-            columns: params[:columns],
+            columns: {x_axis: params[:columns][:x_axis], y_axis: params[:columns][:y_axis]},
             data: data.rows.map {|row|
               [row[columns_positions[0]], row[columns_positions[1]]]
             }

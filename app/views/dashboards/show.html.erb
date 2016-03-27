@@ -29,7 +29,7 @@
         gridster.add_widget('<li widget-id="' + widget_id + '" position-id="' + li_count + '" widget-type="' + widget_type + '">' + box + '</li>', widget.width, widget.height);
 
         var settings = {
-          report_id: widget.entity_id,
+          entity_id: widget.entity_id,
           widget_id: widget.widget_id,
           x_axis: widget.x_axis,
           y_axis: widget.y_axis,
@@ -39,7 +39,9 @@
           name: widget.name
         };
 
-        renderWidget($('li[position-id=' + li_count + ']'), settings);
+        var obj = $('li[position-id=' + li_count + ']');
+        renderWidget(obj, settings);
+        addParameters(obj, widget);
       });
     });
   });

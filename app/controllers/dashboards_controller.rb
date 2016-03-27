@@ -2,7 +2,7 @@ class DashboardsController < ApplicationController
   layout 'dashboard'
   
   before_filter :set_main_items
-  before_filter :set_dashboard, only: [:show, :widgets]
+  before_filter :set_dashboard, only: [:show, :widgets, :update]
   
   def widget_settings
     render json: {
@@ -27,6 +27,19 @@ class DashboardsController < ApplicationController
       render json: {messages: [], status: 'ok', dashboard_id: dashboard.id}
     else
       render json: {messages: dashboard.errors.messages, status: 'error'}
+    end
+  end
+
+  def update
+    @dashboard.dashboard_widgets.map(&:delete)
+    widgets_params.each do |widget_params|
+      @dashboard.dashboard_widgets << DashboardWidget.new(widget_params)
+    end
+
+    if @dashboard.save
+      render json: {messages: [], status: 'ok', dashboard_id: @dashboard.id}
+    else
+      render json: {messages: @dashboard.errors.messages, status: 'error'}
     end
   end
 
