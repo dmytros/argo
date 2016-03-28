@@ -101,6 +101,7 @@ function changeWidgetSettings(widget) {
   } else {
     $('#columns-options').hide();
   }
+  $('#error-message li').remove();
 
   $.get('/dashboards/widget_settings', function() {
     $('#report_id, #refresh_time, #limits').find('option').remove();
@@ -135,6 +136,12 @@ function changeWidgetSettings(widget) {
         text : limit
       }));
     });
+
+    //TODO: change for update method
+    $("#y_axis_as").val($("#y_axis_as option:first").val());
+    $("#x_axis_group").val($("#x_axis_group option:first").val());
+    $("#group-options").hide();
+
   }).fail(function() {
   });
 
@@ -182,10 +189,27 @@ function changeWidgetSettings(widget) {
       $('#error-message').append('<li>' + msg + '</li>');
     }
 
+    var items = JSON.parse($('#last-values').text());
+    var group_visible = $('#x_axis_group').is(':visible');
+
     if ($('#x_axis').is(':visible')) {
       if (!$('#x_axis option:selected').text()) {
         msg = 'X Axis value cannot be blank';
         $('#error-message').append('<li>' + msg + '</li>');
+      }
+
+      if (group_visible) {
+        if (defineCast(items[$('#x_axis option:selected').text()]) != 'Timestamp') {
+          msg = 'X Axis cast should be Timestamp with active GROUP BY option';
+          $('#error-message').append('<li>' + msg + '</li>');
+        }
+      } else {
+        if (obj.attr('widget-id') == 2 || obj.attr('widget-id') == 3) {
+          if (defineCast(items[$('#x_axis option:selected').text()]) != 'Timestamp') {
+            msg = 'X Axis column cast should be Timestamp';
+            $('#error-message').append('<li>' + msg + '</li>');
+          }
+        }
       }
     }
 
@@ -195,11 +219,22 @@ function changeWidgetSettings(widget) {
         $('#error-message').append('<li>' + msg + '</li>');
       }
 
-      // line begins
-      if (obj.attr('widget-id') == 2) {
-        
+      if (group_visible) {
+      } else {
+        var definedCast = defineCast(items[$('#y_axis option:selected').text()]);
+        if (definedCast != 'Integer' && definedCast != 'Float') {
+          msg = 'Y Axis column cast should be Integer or Float';
+          $('#error-message').append('<li>' + msg + '</li>');
+        }
       }
-      // line ends
+    }
+
+    if ($('#y_axis_as option:selected').text() == 'SUM') {
+      var definedCast = defineCast(items[$('#y_axis option:selected').text()]);
+      if (definedCast != 'Integer' && definedCast != 'Float') {
+        msg = 'Y Axis As value cannot SUM non numeric values';
+        $('#error-message').append('<li>' + msg + '</li>');
+      }
     }
 
     if ($('#x_axis_group').is(':visible')) {

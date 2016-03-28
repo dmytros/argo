@@ -147,7 +147,11 @@ class Report < ActiveRecord::Base
     group = ''
     if settings.has_key?(:group)
       if settings[:group][:y_as] != ''
-        columns = "#{settings[:group][:y_as]}(#{settings[:group][:y_axis]}) AS #{settings[:group][:y_axis]}, "
+        columns = if settings[:group][:y_as] == 'SUM'
+          "#{settings[:group][:y_as]}(CAST(#{settings[:group][:y_axis]} AS DOUBLE PRECISION)) AS #{settings[:group][:y_axis]}, "
+        else
+          "#{settings[:group][:y_as]}(#{settings[:group][:y_axis]}) AS #{settings[:group][:y_axis]}, "
+        end
         columns += "TO_TIMESTAMP(#{settings[:group][:x_axis]}, '#{settings[:group][:format]}') AS #{settings[:group][:x_axis]}"
         group = "GROUP BY TO_TIMESTAMP(#{settings[:group][:x_axis]}, '#{settings[:group][:format]}')"
       end
