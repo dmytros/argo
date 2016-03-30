@@ -93,6 +93,62 @@ function removeWidget(widget) {
   gridster.remove_widget(widget.parent().parent().parent().parent());
 }
 
+function loadName(widget) {
+  if (widget.find('input#widgets_name').length)
+    return widget.find('input#widgets_name').val();
+  else
+    return "";
+}
+
+function loadReport(widget) {
+  if (widget.find('input#widgets_entity_id').length)
+    return widget.find('input#widgets_entity_id').val();
+  else
+    return "";
+}
+
+function loadRefreshTime(widget) {
+  if (widget.find('input#widgets_refresh_time').length)
+    return widget.find('input#widgets_refresh_time').val();
+  else
+    return "";
+}
+
+function loadLimits(widget) {
+  if (widget.find('input#widgets_limits').length)
+    return widget.find('input#widgets_limits').val();
+  else
+    return "";
+}
+
+function loadXAxis(widget) {
+  if (widget.find('input#widgets_x_axis').length)
+    return widget.find('input#widgets_x_axis').val();
+  else
+    return "";
+}
+
+function loadYAxis(widget) {
+  if (widget.find('input#widgets_y_axis').length)
+    return widget.find('input#widgets_y_axis').val();
+  else
+    return "";
+}
+
+function loadYAxisAs(widget) {
+  if (widget.find('input#widgets_y_axis_as').length)
+    return widget.find('input#widgets_y_axis_as').val();
+  else
+    return "";
+}
+
+function loadXAxisGroup(widget) {
+  if (widget.find('input#widgets_x_axis_group').length)
+    return widget.find('input#widgets_x_axis_group').val();
+  else
+    return "";
+}
+
 function changeWidgetSettings(widget) {
   var obj = widget.parent().parent().parent().parent();
 
@@ -106,7 +162,12 @@ function changeWidgetSettings(widget) {
   $.get('/dashboards/widget_settings', function() {
     $('#report_id, #refresh_time, #limits').find('option').remove();
   }).done(function(data) {
-    var first_report_id = 0;
+    var firstTimeUse = true;
+
+    var has_settings = false;
+    if (obj.find('div#settings').length) {
+      has_settings = true;
+    }
 
     $.each(data.reports, function(id, report) {
       $('#report_id').append($('<option>', {
@@ -114,12 +175,20 @@ function changeWidgetSettings(widget) {
         text : report.name
       }));
 
-      if (first_report_id === 0) {
-        loadReportColumns(report.id);
+      if (firstTimeUse) {
+        loadReportColumns(report.id, loadXAxis(obj), loadYAxis(obj), loadYAxisAs(obj), loadXAxisGroup(obj));
         loadReportLastValues(report.id);
-        first_report_id = report.id;
+        firstTimeUse = false;
 
         $('#name').val(report.name);
+
+        if (loadYAxisAs(obj) == "") {
+          $("#y_axis_as").val($("#y_axis_as option:first").val());
+          $("#x_axis_group").val($("#x_axis_group option:first").val());
+          $("#group-options").hide();
+        } else {
+          $("#group-options").show();
+        }
       }
     });
 
@@ -137,11 +206,12 @@ function changeWidgetSettings(widget) {
       }));
     });
 
-    //TODO: change for update method
-    $("#y_axis_as").val($("#y_axis_as option:first").val());
-    $("#x_axis_group").val($("#x_axis_group option:first").val());
-    $("#group-options").hide();
-
+    if (has_settings) {
+      $("#name").val(loadName(obj));
+      $("select#report_id").val(loadReport(obj));
+      $("select#refresh_time").val(loadRefreshTime(obj));
+      $("select#limits").val(loadLimits(obj));
+    }
   }).fail(function() {
   });
 
@@ -252,7 +322,7 @@ function changeWidgetSettings(widget) {
   }
 }
 
-function loadReportColumns(report_id) {
+function loadReportColumns(report_id, x_axis_default, y_axis_default, y_axis_as_default, x_axis_group_default) {
   $('#x_axis, #y_axis').find('option').remove();
 
   $.ajax({
@@ -265,6 +335,20 @@ function loadReportColumns(report_id) {
         text : column
       }));
     });
+
+    x_axis_default = typeof x_axis_default !== 'undefined' ? x_axis_default : false;
+    y_axis_default = typeof y_axis_default !== 'undefined' ? y_axis_default : false;
+    x_axis_as_default = typeof x_axis_as_default !== 'undefined' ? x_axis_as_default : false;
+    y_axis_group_default = typeof y_axis_group_default !== 'undefined' ? y_axis_group_default : false;
+
+    if (x_axis_default)
+      $("select#x_axis").val(x_axis_default);
+    if (y_axis_default)
+      $("select#y_axis").val(y_axis_default);
+    if (y_axis_as_default)
+      $("select#y_axis_as").val(y_axis_as_default);
+    if (x_axis_group_default)
+      $("select#x_axis_group").val(x_axis_group_default);
   });
 }
 
@@ -322,7 +406,7 @@ function appendWidgetParameters(widget) {
   set.append('<input type="hidden" id="widgets_name" name="widgets[][name]" value="' + $('#name').val() + '" />');
   set.append('<input type="hidden" id="widgets_entity_id" name="widgets[][entity_id]" value="' + $('#report_id').val() + '" />');
   set.append('<input type="hidden" name="widgets[][entity_type]" value="reports" />');
-  set.append('<input type="hidden" name="widgets[][refresh_time]" value="' + $('#refresh_time').val() + '" />');
+  set.append('<input type="hidden" id="widgets_refresh_time" name="widgets[][refresh_time]" value="' + $('#refresh_time').val() + '" />');
   set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="' + $('#limits').val() + '" />');
   set.append('<input type="hidden" name="widgets[][widget_id]" value="' + obj.attr('widget-id') + '" />');
   set.append('<input type="hidden" name="widgets[][top]" value="' + obj.attr('data-row') + '" />');
@@ -365,7 +449,7 @@ function addParameters(obj, widget) {
   set.append('<input type="hidden" id="widgets_name" name="widgets[][name]" value="' + widget.name + '" />');
   set.append('<input type="hidden" id="widgets_entity_id" name="widgets[][entity_id]" value="' + widget.entity_id + '" />');
   set.append('<input type="hidden" name="widgets[][entity_type]" value="reports" />');
-  set.append('<input type="hidden" name="widgets[][refresh_time]" value="' + widget.refresh_time + '" />');
+  set.append('<input type="hidden" id="widgets_refresh_time" name="widgets[][refresh_time]" value="' + widget.refresh_time + '" />');
   set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="' + widget.limits + '" />');
   set.append('<input type="hidden" name="widgets[][widget_id]" value="' + widget.widget_id + '" />');
   set.append('<input type="hidden" name="widgets[][top]" value="' + widget.top + '" />');
