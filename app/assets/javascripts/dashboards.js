@@ -449,8 +449,14 @@ function addParameters(obj, widget) {
   set.append('<input type="hidden" id="widgets_name" name="widgets[][name]" value="' + widget.name + '" />');
   set.append('<input type="hidden" id="widgets_entity_id" name="widgets[][entity_id]" value="' + widget.entity_id + '" />');
   set.append('<input type="hidden" name="widgets[][entity_type]" value="reports" />');
-  set.append('<input type="hidden" id="widgets_refresh_time" name="widgets[][refresh_time]" value="' + widget.refresh_time + '" />');
-  set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="' + widget.limits + '" />');
+  if (widget.refresh_time == 0)
+    set.append('<input type="hidden" id="widgets_refresh_time" name="widgets[][refresh_time]" value="NO" />');
+  else
+    set.append('<input type="hidden" id="widgets_refresh_time" name="widgets[][refresh_time]" value="' + widget.refresh_time + '" />');
+  if (widget.limits == 0)
+    set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="NO" />');
+  else
+    set.append('<input type="hidden" id="widgets_limits" name="widgets[][limits]" value="' + widget.limits + '" />');
   set.append('<input type="hidden" name="widgets[][widget_id]" value="' + widget.widget_id + '" />');
   set.append('<input type="hidden" name="widgets[][top]" value="' + widget.top + '" />');
   set.append('<input type="hidden" name="widgets[][left]" value="' + widget.left + '" />');
