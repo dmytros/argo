@@ -12,5 +12,5 @@ class Dashboard < ActiveRecord::Base
   validates :name, presence: true
   validates :name, uniqueness: true
 
-  has_many :dashboard_widgets
+  has_many :dashboard_widgets, -> { order 'dashboard_widgets.top, dashboard_widgets.left' }
 end

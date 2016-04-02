@@ -507,6 +507,11 @@ $(function() {
           renderWidget($widget, settings);
         }
       }
+    },
+    draggable: {
+      stop: function() {
+        rerangeWidgetsSizes();
+      }
     }
   }).data('gridster');
 
