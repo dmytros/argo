@@ -26,7 +26,7 @@
 
         var box = boxContent(widget_type, false, widget.name);
 
-        gridster.add_widget('<li widget-id="' + widget_id + '" position-id="' + li_count + '" widget-type="' + widget_type + '">' + box + '</li>', widget.width, widget.height);
+        gridster.add_widget('<li widget-id="' + widget_id + '" position-id="' + li_count + '" widget-type="' + widget_type + '">' + box + '</li>', widget.width, widget.height, widget.left, widget.top);
 
         var settings = {
           entity_id: widget.entity_id,
