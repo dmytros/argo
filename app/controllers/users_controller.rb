@@ -6,11 +6,11 @@ class UsersController < ApplicationController
       if !params[:name].empty? && !params[:password].empty?
         if user = User.authenticate(name_credentials, password_credentials)
           set_user(user)
-          redirect_to dashboards_url
+          redirect_to new_dashboard_url
         end
       end
     else
-      redirect_to dashboards_url if logged?
+      redirect_to new_dashboard_url if logged?
     end
   end
 

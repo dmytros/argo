@@ -158,6 +158,7 @@ function changeWidgetSettings(widget) {
     $('#columns-options').hide();
   }
   $('#error-message li').remove();
+  $('div.error').hide();
 
   $.get('/dashboards/widget_settings', function() {
     $('#report_id, #refresh_time, #limits').find('option').remove();
@@ -225,6 +226,8 @@ function changeWidgetSettings(widget) {
           appendWidgetParameters(widget);
 
           $(this).dialog("close");
+        } else {
+          $('div.error').show();
         }
       },
       Cancel: function() {
