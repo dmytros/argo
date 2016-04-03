@@ -6,6 +6,8 @@
         { 'bSortable': false, 'aTargets': [2] }
       ]
     });
+
+    $('div.success, div.error').delay(10000).hide('slow');
   });
 </script>
 
@@ -14,6 +16,14 @@
 
 <h1>Users list</h1>
 <br/>
+
+<% if flash[:notice] %>
+  <div class="success"><%= flash[:notice] %></div>
+<% end %>
+<% if flash[:error] %>
+  <div class="error"><%= flash[:error] %></div>
+<% end %>
+
 <table id="users-list" class="display" cellspacing="0" width="100%">
   <thead>
     <tr>

@@ -1,12 +1,20 @@
-<% if @user.errors.any? %>
-  <ul>
-    <% @user.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-  </ul>
+<% if user.errors.any? %>
+  <div class="error">
+    <ul>
+      <% user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <script>
+    $(function() {
+      $('div.error').delay(30000).hide('slow');
+    });
+  </script>
 <% end %>
 
-<%= form_for([:admin, @user]) do |f| %>
+<%= form_for([:admin, user]) do |f| %>
   <table>
     <tr>
       <td><%= f.label :name %></td>
@@ -14,7 +22,7 @@
     </tr>
     <tr>
       <td><%= f.label :role_id %></td>
-      <td><%= f.select :role_id, options_for_select(Role.all.map{|role| [role.name, role.id]}, @user.role_id) %></td>
+      <td><%= f.select :role_id, options_for_select(Role.all.map{|role| [role.name, role.id]}, user.role_id) %></td>
     </tr>
     <tr>
       <td><%= f.label :password %></td>

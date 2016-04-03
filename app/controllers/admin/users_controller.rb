@@ -1,6 +1,22 @@
 class Admin::UsersController < ApplicationController
   layout 'admin'
-  before_action :set_user, except: [:list, :index]
+  before_action :set_user, except: [:list, :index, :new, :create]
+
+  def new
+    @user = User.new
+  end
+
+  def create
+    params[:user].delete(:password) if user_params[:password].empty?
+
+    @user = User.new(user_params)
+    if @user.save
+      flash[:notice] = 'User has been created'
+      redirect_to admin_users_url
+    else
+      render :new
+    end
+  end
 
   def list
     data = User.all.map{|user| 
@@ -38,17 +54,29 @@ class Admin::UsersController < ApplicationController
   end
 
   def activate
-    @user.activate
+    if @user.activate
+      flash[:notice] = 'User has been activated'
+    else
+      flash[:error] = 'User has not been activated'
+    end
     redirect_to admin_users_url
   end
 
   def deactivate
-    @user.deactivate
+    if @user.deactivate
+      flash[:notice] = 'User has been deactivated'
+    else
+      flash[:error] = 'User has not been deactivated'
+    end
     redirect_to admin_users_url
   end
 
   def destroy
-    @user.destroy
+    if @user.destroy
+      flash[:notice] = 'User has been deleted'
+    else
+      flash[:error] = 'User has not been deleted'
+    end
     redirect_to admin_users_url
   end
 
