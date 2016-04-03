@@ -28,6 +28,8 @@ class Admin::SourcesController < ApplicationController
   def destroy
     if @source.destroy
       flash[:notice] = 'Source has been deleted'
+    else
+      flash[:error] = 'Source has not been deleted'
     end
     redirect_to admin_sources_url
   end
@@ -60,7 +62,7 @@ class Admin::SourcesController < ApplicationController
     if 'ok' === pinged['status']
       flash[:notice] = "'#{@source.name}' is pingable"
     else
-      flash[:notice] = "'#{@source.name}' has error: " + pinged['message']
+      flash[:error] = "'#{@source.name}' has error: " + pinged['message']
     end
     
     redirect_to admin_sources_url
@@ -70,7 +72,7 @@ class Admin::SourcesController < ApplicationController
     if File.exists?(@source.path)
       flash[:notice] = "'#{@source.name}' exists (#{@source.path})"
     else
-      flash[:notice] = "'#{@source.name}' does not exist (#{@source.path})"
+      flash[:error] = "'#{@source.name}' does not exist (#{@source.path})"
     end
     
     redirect_to admin_sources_url

@@ -30,6 +30,8 @@ class Admin::SchedulersController < ApplicationController
   def destroy
     if @scheduler.destroy
       flash[:notice] = 'Scheduler has been deleted'
+    else
+      flash[:error] = 'Scheduler has not been deleted'
     end
     redirect_to admin_schedulers_url
   end

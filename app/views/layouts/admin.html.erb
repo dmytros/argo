@@ -16,10 +16,6 @@
 <body>
   <div id="head"><%= render 'layouts/header' %></div>
   <div id="main">
-    <div class="notice_messages">
-      <%= flash[:notice] if flash[:notice] %>
-    </div>
-    
     <br/>
     <%= yield %>
   </div>

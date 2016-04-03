@@ -16,11 +16,19 @@
 </script>
 
 <% if source.errors.any? %>
-  <ul>
-    <% source.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-  </ul>
+  <div class="error">
+    <ul>
+      <% source.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <script>
+    $(function() {
+      $('div.error').delay(30000).hide('slow');
+    });
+  </script>
 <% end %>
 
 <%= form_for([:admin, source]) do |f| %>

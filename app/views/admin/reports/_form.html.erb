@@ -156,22 +156,32 @@
 </script>
 
 <% if report.errors.any? %>
-  <ul>
-    <% report.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-  </ul>
+  <div class="error">
+    <ul>
+      <% report.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <script>
+    $(function() {
+      $('div.error').delay(30000).hide('slow');
+    });
+  </script>
 <% end %>
 
 <div id="wizard_container" style="display:none">
   <br/>
-  <a href="#" id="wizard-call">Use Wizard</a>
+  <a href="#" id="wizard-call" class="button button-rounded">Use Wizard</a>
+  <a href="#" onclick="$('#converted_expression').toggle('slow'); return false;" class="button button-rounded">Macroses</a>
   <br/><br/>
 </div>
 
 <div id="get_columns_container" style="display:none">
   <br/>
-  <a href="#" id="get-columns-call">Set Columns</a>
+  <a href="#" id="get-columns-call" class="button button-rounded">Set Columns</a>
+  <a href="#" onclick="$('#converted_expression').toggle('slow'); return false;" class="button button-rounded">Macroses</a>
   <div id="get_columns_spinner" style="display:none; float: left"><%= image_tag 'spinner-small.gif' %></div>
   <br/><br/>
 </div>
@@ -199,7 +209,7 @@
       <tr>
         <td><%= f.label :regular_expression %></td>
         <td><%= f.text_area :regular_expression, size: "70x10" %></td>
-        <td><span id="converted_expression"><%= Report.convert_macros(@report.regular_expression || '') %></span></td>
+        <td><span id="converted_expression" style="display:none"><%= Report.convert_macros(@report.regular_expression || '') %></span></td>
       </tr>
       <br/>
       <table id="report_file_columns"><tbody></tbody></table>

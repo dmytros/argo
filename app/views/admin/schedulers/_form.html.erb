@@ -22,11 +22,19 @@
 </script>
 
 <% if scheduler.errors.any? %>
-  <ul>
-    <% scheduler.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-  </ul>
+  <div class="error">
+    <ul>
+      <% scheduler.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <script>
+    $(function() {
+      $('div.error').delay(30000).hide('slow');
+    });
+  </script>
 <% end %>
 
 <%= form_for([:admin, scheduler]) do |f| %>

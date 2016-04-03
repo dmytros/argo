@@ -29,12 +29,12 @@ class Source < ActiveRecord::Base
   SOCKET = 2
   
   validates :destination, presence: true
+  validates :name, presence: true, uniqueness: true
   
   # database validations
-  validates :name, :host, :username, :port, :database, :adapter, presence: true, if: :is_database?
+  validates :host, :username, :port, :database, :adapter, presence: true, if: :is_database?
   validates :adapter, inclusion: {in: ADAPTERS}, if: :is_database?
   validates :port, numericality: true, if: :is_database?
-  validates :name, uniqueness: true, if: :is_database?
   validates :host, uniqueness: {scope: [:port, :database, :username, :password, :adapter]}, if: :is_database?
   
   # file validations

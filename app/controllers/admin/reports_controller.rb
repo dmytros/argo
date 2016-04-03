@@ -32,6 +32,8 @@ class Admin::ReportsController < ApplicationController
   def destroy
     if @report.destroy
       flash[:notice] = 'Report has been deleted'
+    else
+      flash[:error] = 'Report has not been deleted'
     end
     redirect_to admin_reports_url
   end
