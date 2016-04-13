@@ -54,6 +54,20 @@
         $('#converted_expression').html(data);
       });
     });
+
+    $('#report_sql').keyup(function () {
+      $.ajax({
+        url: '/admin/reports/replace_macros',
+        method: 'post',
+        data: {
+          report: {
+            sql: $('#report_sql').val()
+          }
+        }
+      }).success(function(data) {
+        $('#converted_expression').html(data);
+      });
+    });
     
     $('#wizard-call').click(function(event) {
       event.preventDefault();
@@ -186,6 +200,14 @@
   <br/><br/>
 </div>
 
+<span id="converted_expression" style="display:none">
+  <% if @report.sql.empty? and !@report.regular_expression.empty? %>
+    <%= Report.convert_macros(@report.regular_expression) %>
+  <% elsif !@report.sql.empty? and @report.regular_expression.empty? %>
+    <%= Report.convert_macros(@report.sql) %>
+  <% end %>
+</span>
+
 <%= hidden_field_tag 'database_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[0]}.compact.to_json %>
 <%= hidden_field_tag 'file_sources', @sources.map{|s| s.id if s.destination == Source::DESTINATIONS[1]}.compact.to_json %>
 
@@ -209,7 +231,6 @@
       <tr>
         <td><%= f.label :regular_expression %></td>
         <td><%= f.text_area :regular_expression, size: "70x10" %></td>
-        <td><span id="converted_expression" style="display:none"><%= Report.convert_macros(@report.regular_expression || '') %></span></td>
       </tr>
       <br/>
       <table id="report_file_columns"><tbody></tbody></table>

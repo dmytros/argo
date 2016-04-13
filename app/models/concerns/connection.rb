@@ -54,7 +54,9 @@ module Connection
             started_at = Time.now.to_f
             source_attributes = self.source.attributes.except(*excluded)
             ActiveRecord::Base.establish_connection(filter_source_attributes(source_attributes))
-            data = ActiveRecord::Base.connection.exec_query(sql)
+
+            data = ActiveRecord::Base.connection.exec_query(Report.convert_macros(sql))
+
             finished_at = Time.now.to_f
 
             formated_output(name, 'ok', '', data, finished_at - started_at)

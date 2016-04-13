@@ -82,7 +82,13 @@ class Admin::ReportsController < ApplicationController
   end
   
   def replace_macros
-    render text: Report.convert_macros(report_params[:regular_expression])
+    input = if report_params.has_key?('sql')
+      report_params[:sql]
+    else
+      report_params[:regular_expression]
+    end
+
+    render text: Report.convert_macros(input)
   end
   
   private
