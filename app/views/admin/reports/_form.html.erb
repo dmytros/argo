@@ -201,9 +201,9 @@
 </div>
 
 <span id="converted_expression" style="display:none">
-  <% if @report.sql.empty? and !@report.regular_expression.empty? %>
+  <% if @report.sql.nil? and !@report.regular_expression.nil? %>
     <%= Report.convert_macros(@report.regular_expression) %>
-  <% elsif !@report.sql.empty? and @report.regular_expression.empty? %>
+  <% elsif !@report.sql.nil? and @report.regular_expression.nil? %>
     <%= Report.convert_macros(@report.sql) %>
   <% end %>
 </span>
